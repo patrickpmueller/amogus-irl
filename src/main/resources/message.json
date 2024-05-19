@@ -1,0 +1,23 @@
+[
+    {
+        "action": "vote",
+        "target": "skip/playerID"
+    },
+    {
+        "action": "taskCompleted",
+        "id": "7"
+    },
+    {
+        "action": "meeting",
+        "death": "emergency/playerID"
+    },
+    {
+        "action": "kill",
+        "player": "playerID"
+    },
+    {
+        "action": "gameEnd",
+        "winner": "programmer",
+        "reason": "power"
+    }
+]
