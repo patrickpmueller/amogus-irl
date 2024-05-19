@@ -1,4 +1,4 @@
-package com.pellacanimuller.game.players;
+package com.pellacanimuller.amogus_irl.game.players;
 
 import com.pellacanimuller.amogus_irl.game.Task;
 

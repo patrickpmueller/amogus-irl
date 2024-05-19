@@ -1,4 +1,4 @@
-package com.pellacanimuller.game;
+package com.pellacanimuller.amogus_irl.game;
 
 import com.pellacanimuller.amogus_irl.game.players.Player;
 import org.apache.logging.log4j.LogManager;

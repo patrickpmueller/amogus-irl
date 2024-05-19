@@ -1,4 +1,4 @@
-package com.pellacanimuller.net;
+package com.pellacanimuller.amogus_irl.net;
 
 import com.pellacanimuller.amogus_irl.game.Game;
 import com.pellacanimuller.amogus_irl.game.players.Player;
