@@ -44,13 +44,13 @@ public class GameWSServer extends WebSocketServer {
 
     @Override
     public void onError(WebSocket conn, Exception ex) {
-        ex.printStackTrace();
+        log.error("Error on connection {}, Stack Trace: \n{}", conn.getRemoteSocketAddress(), ex.getStackTrace());
         // TODO error handling
     }
 
     @Override
     public void onMessage(WebSocket conn, String msg) {
-        log.debug("Message '" + msg + "' recieved");
+        log.debug("Message '{}' recieved", msg);
         Player player = conn.getAttachment();
         try (JsonReader reader = Json.createReader(new StringReader(msg))) {
             JsonArray actions = reader.readArray();
@@ -58,7 +58,7 @@ public class GameWSServer extends WebSocketServer {
                 arg -> {
                     JsonObject actionObj = arg.asJsonObject();
                     String action = actionObj.getString("action");
-                    log.debug("Action '" + action + "' parsed. Trying to fulfil action.");
+                    log.debug("Action '{}' parsed. Trying to fulfil action.", action);
                     switch (action) {
                         case "vote":
                         {
@@ -83,8 +83,7 @@ public class GameWSServer extends WebSocketServer {
                         }
                         case "setup":
                         {
-                            String playerID = actionObj.getString("playerID");
-                            ((Player) conn.getAttachment()).id = playerID;
+                            ((Player) conn.getAttachment()).id = actionObj.getString("playerID");
                         }
                         case "taskCompleted":
                         {
@@ -110,7 +109,7 @@ public class GameWSServer extends WebSocketServer {
                             break;
                         }
                         default:
-                            log.debug("Action '" + action + "' not recognised.");
+                            log.debug("Action '{}' not recognised.", action);
                             break;
                     }
                 }
