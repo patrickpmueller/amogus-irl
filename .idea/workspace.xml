@@ -4,26 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c5470cdb-2d06-4d06-a55c-69868b015935" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/http_root/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/game/Game.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/game/Meeting.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/game/Task.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/game/players/Crewmate.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/game/players/Healer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/game/players/Impostor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/game/players/Player.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/net/GameWSServer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/log4j2.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/message.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/js/main.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/js/main.js" afterDir="false" />
+    <list default="true" id="c5470cdb-2d06-4d06-a55c-69868b015935" name="Changes" comment=".gitignore updates">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/amogus_irl/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/amogus_irl/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/amogus_irl/game/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/amogus_irl/game/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/amogus_irl/game/Meeting.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/amogus_irl/game/Meeting.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/amogus_irl/game/players/Crewmate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/amogus_irl/game/players/Crewmate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/amogus_irl/net/GameWSServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/amogus_irl/net/GameWSServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/js/main.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,26 +22,28 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 4
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
   <component name="ProjectId" id="2ggwDyLf1HBNabKSkpP03AznuO5" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/patrickpmueller/code/projects/amogus-irl/amogus-irl/src/test/js",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/patrickpmueller/code/projects/amogus-irl/amogus-irl/src/test/js&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/test/js" />
@@ -70,6 +61,58 @@
       <option name="presentableId" value="Default" />
       <updated>1716132412875</updated>
     </task>
+    <task id="LOCAL-00001" summary="Initial State, taken over from old project, added version control">
+      <option name="closed" value="true" />
+      <created>1716132832700</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1716132832700</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Fixed package issues">
+      <option name="closed" value="true" />
+      <created>1716133322722</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1716133322722</updated>
+    </task>
+    <task id="LOCAL-00003" summary=".gitignore updates">
+      <option name="closed" value="true" />
+      <created>1716133460001</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1716133460001</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Initial State, taken over from old project, added version control" />
+    <MESSAGE value="Fixed package issues" />
+    <MESSAGE value=".gitignore updates" />
+    <option name="LAST_COMMIT_MESSAGE" value=".gitignore updates" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.net.BindException" package="java.net" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
