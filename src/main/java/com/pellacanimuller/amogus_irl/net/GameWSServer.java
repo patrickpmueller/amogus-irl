@@ -104,6 +104,11 @@ public class GameWSServer extends WebSocketServer {
                             game.alive.remove(game.getPlayer(target));
                             break;
                         }
+                        case "start_game":
+                        {
+                            game.startGame();
+                            break;
+                        }
                         default:
                             log.debug("Action '" + action + "' not recognised.");
                             break;

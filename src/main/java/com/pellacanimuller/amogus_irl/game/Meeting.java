@@ -25,7 +25,7 @@ public class Meeting {
         voters = new HashSet<>();
 
         // Vote tally
-        votes = new HashMap<>(game.playerCount + 1);
+        votes = new HashMap<>(game.alive.size() + 1);
         for (Player player : game.alive) {
             votes.put(player, 0);
         }
