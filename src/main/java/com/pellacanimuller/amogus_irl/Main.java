@@ -9,9 +9,9 @@ public class Main {
 	public static void main(String[] args) {
         // STARTUP PROCEDURES:
         // 1. create game , set to lobby
-        // 2. TODO Create WS server
-        // 3. TODO Wait and react to game_start call
-        // 4. TODO Activate listeners, setup tasks and roles
+        // 2. Create WS server
+        // 3. Wait and react to game_start call
+        // 4. Activate listeners, setup roles and TODO tasks
         // 5. TODO game loop
         Game game = new Game(8);
         InetSocketAddress address = new InetSocketAddress("localhost", 8080);
