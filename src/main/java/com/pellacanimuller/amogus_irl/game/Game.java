@@ -1,13 +1,14 @@
 package com.pellacanimuller.amogus_irl.game;
 
 import com.pellacanimuller.amogus_irl.game.players.Crewmate;
+import com.pellacanimuller.amogus_irl.game.players.Healer;
+import com.pellacanimuller.amogus_irl.game.players.Impostor;
 import com.pellacanimuller.amogus_irl.game.players.Player;
+import com.pellacanimuller.amogus_irl.net.GameWSServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 enum GameState {
     LOBBY,
@@ -15,15 +16,27 @@ enum GameState {
     MEETING
 }
 
+enum Role {
+    IMPOSTOR,
+    CREWMATE,
+    HEALER
+}
+
 public class Game {
     private final static Logger log = LogManager.getLogger(Game.class);
 
     public final int MAX_PLAYERS = 8; // TODO read config
-    public Set<Player> players = new HashSet<>(MAX_PLAYERS);
-    public Set<Player> alive = new HashSet<>(MAX_PLAYERS);
+    public final int TASKS_PER_PLAYER = 4;
+    public final int IMPOSTOR_COUNT = 1;
+    public final int CREWMATE_COUNT = 2;
+    public final int HEALER_COUNT = 1;
+
+    public List<Player> players = new ArrayList<>(MAX_PLAYERS);
+    public List<Player> alive = new ArrayList<>(MAX_PLAYERS);
     public Meeting currentMeeting = null;
     private GameState gameState = GameState.LOBBY;
     public Task[] tasks;
+    private GameWSServer wsServer;
 
     private static final long SEC = 1000;
 
@@ -36,16 +49,64 @@ public class Game {
     }
 
     public void startGame() {
+        if (IMPOSTOR_COUNT + CREWMATE_COUNT + HEALER_COUNT != players.size()) {
+            log.info("Cannot start game, config invalid");
+            return;
+        }
+        if (wsServer == null) {
+            log.info("Cannot start game, wsServer not initialized.");
+            return;
+        }
+
         gameState = GameState.INGAME;
+
+        List<Role> roles_available = new ArrayList<>();
+        for (int i = 0; i < IMPOSTOR_COUNT; i++) {
+            roles_available.add(Role.IMPOSTOR);
+        }
+        for (int i = 0; i < CREWMATE_COUNT; i++) {
+            roles_available.add(Role.CREWMATE);
+        }
+        for (int i = 0; i < HEALER_COUNT; i++) {
+            roles_available.add(Role.HEALER);
+        }
+
+        Random rand = new Random();
+        Set<Task> task_set = null; // TODO
+        players.replaceAll(old_player -> {
+            int index = rand.nextInt(players.size());
+
+            Role role = roles_available.get(index);
+            roles_available.remove(index);
+
+            Player new_player = switch (role) {
+                case CREWMATE -> new Crewmate(old_player, task_set);
+                case HEALER -> new Healer(old_player, task_set);
+                case IMPOSTOR -> new Impostor(old_player);
+                case null -> {
+                    log.error("Could not start game, no role in array");
+                    throw new RuntimeException();
+                }
+            };
+
+            wsServer.updateAttachment(old_player, new_player);
+
+            return new_player;
+        });
+
         log.info("Starting game in 10...");
         try {
             Thread.sleep(SEC * 5);
         } catch (Exception _) {}
     }
 
+    public void acknowledgeServerStarted(GameWSServer server) {
+        wsServer = server;
+    }
+
     public Player addPlayer() {
         // Create player and increment count
-        Player player = new Player();
+        Player player = new Player("");
         // Add and return player
         players.add(player);
         return player;

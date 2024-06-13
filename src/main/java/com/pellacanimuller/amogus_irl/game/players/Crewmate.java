@@ -6,7 +6,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Crewmate extends Player {
-    public Set<Task> tasks = new HashSet<>(); // TODO read task count; fill set
+    public Set<Task> tasks; // TODO read task count; fill set
+
+    public Crewmate(Player player, Set<Task> tasks) {
+        super(player.id);
+        this.tasks = tasks;
+    }
 
     public void completeTask(Task task) {
         for (Task elem : tasks) {

@@ -1,18 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="RunManager">
-    <configuration default="true" type="JetRunConfigurationType">
-      <module name="amogus-irl" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <module name="amogus-irl" />
-      <option name="filePath" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="e0566dbd-7ad5-45e2-aee2-140f211cb6f3" name="Changes" comment="setup roles and some minor improvements">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/amogus_irl/game/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/amogus_irl/game/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/amogus_irl/game/players/Crewmate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/amogus_irl/game/players/Crewmate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/amogus_irl/game/players/Healer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/amogus_irl/game/players/Healer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/amogus_irl/net/GameWSServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pellacanimuller/amogus_irl/net/GameWSServer.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5
+}]]></component>
+  <component name="ProjectId" id="2hpnGfoGkpCExcKaCn3hnsESQPc" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task id="LOCAL-00001" summary="setup roles and some minor improvements">
+      <option name="closed" value="true" />
+      <created>1718223428166</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1718223428166</updated>
+    </task>
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e0566dbd-7ad5-45e2-aee2-140f211cb6f3" name="Changes" comment="setup roles and some minor improvements" />
+      <created>1718299791992</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1718299791992</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value=".gitignore updates" />
+    <MESSAGE value="setup roles and some minor improvements" />
+    <option name="LAST_COMMIT_MESSAGE" value="setup roles and some minor improvements" />
   </component>
 </project>

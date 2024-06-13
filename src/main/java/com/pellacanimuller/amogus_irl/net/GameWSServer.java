@@ -27,6 +27,7 @@ public class GameWSServer extends WebSocketServer {
     public GameWSServer(InetSocketAddress addr, Game game) {
         super(addr);
         this.game = game;
+        game.acknowledgeServerStarted(this);
     }
 
     @Override
@@ -46,6 +47,14 @@ public class GameWSServer extends WebSocketServer {
     public void onError(WebSocket conn, Exception ex) {
         log.error("Error on connection {}, Stack Trace: \n{}", conn.getRemoteSocketAddress(), ex.getStackTrace());
         // TODO error handling
+    }
+
+    public void updateAttachment(Player old_player, Player new_player) {
+        getConnections().forEach(conn -> {
+            if (Objects.equals(conn.getAttachment(), old_player)) {
+                conn.setAttachment(new_player);
+            }
+        });
     }
 
     @Override
