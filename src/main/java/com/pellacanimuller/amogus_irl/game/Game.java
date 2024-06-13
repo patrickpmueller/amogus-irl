@@ -44,8 +44,11 @@ public class Game {
     public Game(int ntasks) {
         // Create Tasks array
         tasks = new Task[ntasks];
-        log.warn("Tasks not initialised");
-        // TODO create tasks array
+
+        for (int i = 0; i < ntasks; i++) {
+           tasks[i] = new Task();
+           tasks[i].id = Integer.toString(i);
+        }
     }
 
     public void startGame() {
@@ -55,6 +58,10 @@ public class Game {
         }
         if (wsServer == null) {
             log.info("Cannot start game, wsServer not initialized.");
+            return;
+        }
+        if (TASKS_PER_PLAYER > tasks.length) {
+            log.info("Cannot start game, more tpp than available.");
             return;
         }
 
@@ -72,10 +79,16 @@ public class Game {
         }
 
         Random rand = new Random();
-        Set<Task> task_set = null; // TODO
         players.replaceAll(old_player -> {
-            int index = rand.nextInt(players.size());
+            Set<Task> task_set = new HashSet<>(TASKS_PER_PLAYER);
+            int i = 0;
+            while (i < TASKS_PER_PLAYER) {
+               if (task_set.add(tasks[rand.nextInt(tasks.length)])) {
+                   i++;
+                }
+            }
 
+            int index = rand.nextInt(players.size());
             Role role = roles_available.get(index);
             roles_available.remove(index);
 

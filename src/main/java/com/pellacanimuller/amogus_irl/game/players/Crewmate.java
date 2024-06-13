@@ -2,7 +2,6 @@ package com.pellacanimuller.amogus_irl.game.players;
 
 import com.pellacanimuller.amogus_irl.game.Task;
 
-import java.util.HashSet;
 import java.util.Set;
 
 public class Crewmate extends Player {
