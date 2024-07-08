@@ -15,12 +15,12 @@ import javax.json.JsonReader;
 import java.io.StringReader;
 import java.net.InetSocketAddress;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * GameWSServer
  */
 public class GameWSServer extends WebSocketServer {
-    public final int MAX_PLAYERS = 8; // TODO read config
     private final Game game;
     private final static Logger log = LogManager.getLogger( GameWSServer.class );
 
@@ -41,6 +41,7 @@ public class GameWSServer extends WebSocketServer {
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
         game.removePlayer(conn.getAttachment());
         log.debug("Player disconnected");
+        broadcast("[{\"type\": \"playerlist\",\"data\": [\"" + getConnections().stream().map(con -> ((Player) con.getAttachment()).id).collect(Collectors.joining("\",\"")) + "\"]}]");
     }
 
     @Override
@@ -69,10 +70,8 @@ public class GameWSServer extends WebSocketServer {
                     String action = actionObj.getString("action");
                     log.debug("Action '{}' parsed. Trying to fulfil action.", action);
                     switch (action) {
-                        case "vote":
-                        {
-                            String target = actionObj.getString("target");
-                            target = target.strip();
+                        case "vote" -> {
+                            String target = actionObj.getString("target").strip();
                             Player voted;
                             if (Objects.equals(target, "skip")) {
                                 voted = null;
@@ -84,42 +83,31 @@ public class GameWSServer extends WebSocketServer {
                                     return;
                                 }
                             }
-                            if (game.currentMeeting != null)
+                            if (game.currentMeeting != null) {
                                 game.currentMeeting.vote(voted);
-                            else
+                            } else {
                                 log.info("No meeting running, but a vote was requested");
-                            break;
+                            }
                         }
-                        case "setup":
-                        {
+                        case "setup" -> {
                             ((Player) conn.getAttachment()).id = actionObj.getString("playerID");
+                            broadcast("[{\"type\": \"playerlist\",\"data\": [\"" + getConnections().stream().map(con -> ((Player) con.getAttachment()).id).collect(Collectors.joining("\",\"")) + "\"]}]");
                         }
-                        case "taskCompleted":
-                        {
+                        case "taskCompleted" -> {
                             String id = actionObj.getString("id");
                             game.completeTask(player, id);
-                            break;
                         }
-                        case "meeting":
-                        {
+                        case "meeting" -> {
                             String death = actionObj.getString("death");
                             game.startMeeting(player, death);
-                            break;
                         }
-                        case "kill":
-                        {
+                        case "kill" -> {
                             String target = actionObj.getString("player");
                             game.alive.remove(game.getPlayer(target));
-                            break;
                         }
-                        case "start_game":
-                        {
-                            game.startGame();
-                            break;
-                        }
-                        default:
-                            log.debug("Action '{}' not recognised.", action);
-                            break;
+                        case "startGame" -> game.startGame();
+                        case "changeSetting" -> game.changeSetting(actionObj.getString("key"), actionObj.getString("value"));
+                        default -> log.debug("Action '{}' not recognised.", action);
                     }
                 }
             );
