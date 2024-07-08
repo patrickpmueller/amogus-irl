@@ -5,6 +5,7 @@ import com.pellacanimuller.amogus_irl.game.players.Healer;
 import com.pellacanimuller.amogus_irl.game.players.Impostor;
 import com.pellacanimuller.amogus_irl.game.players.Player;
 import com.pellacanimuller.amogus_irl.net.GameWSServer;
+import com.pellacanimuller.amogus_irl.util.TomlSettingsManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,11 +26,12 @@ enum Role {
 public class Game {
     private final static Logger log = LogManager.getLogger(Game.class);
 
-    public final int MAX_PLAYERS = 8; // TODO read config
-    public final int TASKS_PER_PLAYER = 4;
-    public final int IMPOSTOR_COUNT = 1;
-    public final int CREWMATE_COUNT = 2;
-    public final int HEALER_COUNT = 1;
+    public int MAX_PLAYERS = 8; // TODO read config
+    public int TASKS_PER_PLAYER = 4;
+    public int IMPOSTOR_COUNT = 1;
+    public int CREWMATE_COUNT = 2;
+    public int HEALER_COUNT = 1;
+    public int TASK_COUNT = 8;
 
     public List<Player> players = new ArrayList<>(MAX_PLAYERS);
     public List<Player> alive = new ArrayList<>(MAX_PLAYERS);
@@ -41,11 +43,11 @@ public class Game {
     private static final long SEC = 1000;
 
 
-    public Game(int ntasks) {
+    public Game() {
         // Create Tasks array
-        tasks = new Task[ntasks];
+        tasks = new Task[TASK_COUNT];
 
-        for (int i = 0; i < ntasks; i++) {
+        for (int i = 0; i < TASK_COUNT; i++) {
            tasks[i] = new Task();
            tasks[i].id = Integer.toString(i);
         }
@@ -179,4 +181,59 @@ public class Game {
             }
         }
     }
+
+    public void changeSetting(String key, String value) throws NumberFormatException {
+        switch (key) {
+            case "impostorCount" -> {
+                IMPOSTOR_COUNT = Integer.decode(value);
+                Map<String, Object> settings = new HashMap<>();
+                Map<String, Object> players = new HashMap<>();
+                players.put("impostor_count", value);
+                settings.put("players", players);
+                TomlSettingsManager.writeSettings(settings);
+            }
+            case "crewmateCount" -> {
+                CREWMATE_COUNT = Integer.decode(value);
+                Map<String, Object> settings = new HashMap<>();
+                Map<String, Object> players = new HashMap<>();
+                players.put("crewmate_count", value);
+                settings.put("players", players);
+                TomlSettingsManager.writeSettings(settings);
+            }
+            case "healerCount" -> {
+                HEALER_COUNT = Integer.decode(value);
+                Map<String, Object> settings = new HashMap<>();
+                Map<String, Object> players = new HashMap<>();
+                players.put("healer_count", value);
+                settings.put("players", players);
+                TomlSettingsManager.writeSettings(settings);
+            }
+            case "taskCount" -> {
+                TASK_COUNT = Integer.decode(value);
+                Map<String, Object> settings = new HashMap<>();
+                Map<String, Object> players = new HashMap<>();
+                players.put("task_count", value);
+                settings.put("players", players);
+                TomlSettingsManager.writeSettings(settings);
+            }
+            case "tasksPerPlayer" -> {
+                TASKS_PER_PLAYER = Integer.decode(value);
+                Map<String, Object> settings = new HashMap<>();
+                Map<String, Object> players = new HashMap<>();
+                players.put("tasks_per_player", value);
+                settings.put("players", players);
+                TomlSettingsManager.writeSettings(settings);
+            }
+            case "maxPlayers" -> {
+                MAX_PLAYERS = Integer.decode(value);
+                Map<String, Object> settings = new HashMap<>();
+                Map<String, Object> players = new HashMap<>();
+                players.put("max_players", value);
+                settings.put("players", players);
+                TomlSettingsManager.writeSettings(settings);
+            }
+        }
+    }
+
+
 }
