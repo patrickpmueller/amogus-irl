@@ -92,7 +92,7 @@ public class Game {
                 }
             }
 
-            int index = rand.nextInt(players.size());
+            int index = rand.nextInt(roles_available.size());
             Role role = roles_available.get(index);
             roles_available.remove(index);
 
