@@ -54,7 +54,7 @@ public class Game {
 
     public void startGame() {
         if (IMPOSTOR_COUNT + CREWMATE_COUNT + HEALER_COUNT != players.size()) {
-            log.info("Cannot start game, config invalid");
+            log.info("Cannot start game, wrong player count");
             return;
         }
         if (wsServer == null) {
@@ -66,7 +66,10 @@ public class Game {
             return;
         }
 
-        gameState = GameState.INGAME;
+        if (gameState != GameState.LOBBY) {
+            log.info("Cannot start game, already running");
+            return;
+        }
 
         List<Role> roles_available = new ArrayList<>();
         for (int i = 0; i < IMPOSTOR_COUNT; i++) {
@@ -102,16 +105,11 @@ public class Game {
                     throw new RuntimeException();
                 }
             };
-
             wsServer.updateAttachment(old_player, new_player);
-
             return new_player;
         });
 
-        log.info("Starting game in 10...");
-        try {
-            Thread.sleep(SEC * 5);
-        } catch (Exception _) {}
+        gameState = GameState.INGAME;
     }
 
     public void acknowledgeServerStarted(GameWSServer server) {
