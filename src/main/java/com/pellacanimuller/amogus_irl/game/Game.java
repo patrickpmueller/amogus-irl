@@ -183,12 +183,12 @@ public class Game {
 
     public void updateSetting(String key, String value) {
         switch (key) {
-            case "impostors" -> IMPOSTOR_COUNT = Integer.decode(value);
-            case "crewmates" -> CREWMATE_COUNT = Integer.decode(value);
-            case "healers" -> HEALER_COUNT = Integer.decode(value);
-            case "total" -> TASK_COUNT = Integer.decode(value);
-            case "perPlayer" -> TASKS_PER_PLAYER = Integer.decode(value);
-            case "maxPlayers" -> MAX_PLAYERS = Integer.decode(value);
+            case "impostors" -> IMPOSTOR_COUNT = Integer.parseInt(value);
+            case "crewmates" -> CREWMATE_COUNT = Integer.parseInt(value);
+            case "healers" -> HEALER_COUNT = Integer.parseInt(value);
+            case "total" -> TASK_COUNT = Integer.parseInt(value);
+            case "perPlayer" -> TASKS_PER_PLAYER = Integer.parseInt(value);
+            case "maxPlayers" -> MAX_PLAYERS = Integer.parseInt(value);
             default -> log.error("Cannot parse {}", key);
         }
     }
