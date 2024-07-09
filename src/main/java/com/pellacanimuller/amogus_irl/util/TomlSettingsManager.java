@@ -113,19 +113,14 @@ public class TomlSettingsManager {
         return map;
     }
 
-    @SuppressWarnings("unchecked")
     private static void updateVars(String key, JsonValue value, Map<String, Object> settings, Game game) {
         switch (value.getValueType()) {
             case OBJECT -> settings.put(key, convertJsonObjectToMap(value.asJsonObject(), game));
             case STRING -> log.info("Strings not used for config yet");
             case NUMBER -> {
-                Map<String, Object> roles = (Map<String, Object>) settings.get("roles");
-                Map<String, Object> tasks = (Map<String, Object>) settings.get("tasks");
 
                 switch (key) {
-                    case "impostors", "crewmates", "healers" -> roles.put(key, Integer.parseInt(value.toString()));
-                    case "total", "perPlayer" -> tasks.put(key, Integer.parseInt(value.toString()));
-                    case "maxPlayers" -> settings.put("maxPlayers", Integer.parseInt(value.toString()));
+                    case "impostors", "crewmates", "healers", "total", "perPlayer", "maxPlayers" -> settings.put(key, Integer.parseInt(value.toString()));
                     default -> {
                         log.error("Unknown key: {}", key);
                         return;
