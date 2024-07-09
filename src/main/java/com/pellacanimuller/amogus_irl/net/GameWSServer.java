@@ -35,13 +35,13 @@ public class GameWSServer extends WebSocketServer {
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
         Player player = game.addPlayer();
         conn.setAttachment(player);
-        log.debug("Player connected");
+        log.info("Player connected");
     }
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
         game.removePlayer(conn.getAttachment());
-        log.debug("Player disconnected");
+        log.info("Player disconnected");
         broadcast("[{\"type\": \"playerlist\",\"data\": [\"" + getConnections().stream().map(con -> ((Player) con.getAttachment()).id).collect(Collectors.joining("\",\"")) + "\"]}]");
     }
 
@@ -69,7 +69,7 @@ public class GameWSServer extends WebSocketServer {
                 arg -> {
                     JsonObject actionObj = arg.asJsonObject();
                     String action = actionObj.getString("action");
-                    log.debug("Action '{}' parsed. Trying to fulfil action.", action);
+                    log.info("Action '{}' parsed. Trying to fulfil action.", action);
                     switch (action) {
                         case "vote" -> {
                             String target = actionObj.getString("target").strip();
@@ -121,7 +121,7 @@ public class GameWSServer extends WebSocketServer {
                             }
                             broadcastInfo();
                         }
-                        default -> log.debug("Action '{}' not recognised.", action);
+                        default -> log.info("Action '{}' not recognised.", action);
                     }
                 }
             );
