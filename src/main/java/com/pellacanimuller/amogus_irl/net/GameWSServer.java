@@ -2,6 +2,7 @@ package com.pellacanimuller.amogus_irl.net;
 
 import com.pellacanimuller.amogus_irl.game.Game;
 import com.pellacanimuller.amogus_irl.game.players.Player;
+import com.pellacanimuller.amogus_irl.util.TomlSettingsManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.java_websocket.WebSocket;
@@ -60,7 +61,7 @@ public class GameWSServer extends WebSocketServer {
 
     @Override
     public void onMessage(WebSocket conn, String msg) {
-        log.debug("Message '{}' recieved", msg);
+        log.debug("Message '{}' received", msg);
         Player player = conn.getAttachment();
         try (JsonReader reader = Json.createReader(new StringReader(msg))) {
             JsonArray actions = reader.readArray();
@@ -90,8 +91,11 @@ public class GameWSServer extends WebSocketServer {
                             }
                         }
                         case "setup" -> {
-                            ((Player) conn.getAttachment()).id = actionObj.getString("playerID");
-                            broadcast("[{\"type\": \"playerlist\",\"data\": [\"" + getConnections().stream().map(con -> ((Player) con.getAttachment()).id).collect(Collectors.joining("\",\"")) + "\"]}]");
+                            String playerID = actionObj.getString("playerID");
+                            if (!Objects.equals(playerID, "in_settings")) {
+                                ((Player) conn.getAttachment()).id = playerID;
+                            }
+                            broadcastInfo();
                         }
                         case "taskCompleted" -> {
                             String id = actionObj.getString("id");
@@ -106,7 +110,14 @@ public class GameWSServer extends WebSocketServer {
                             game.alive.remove(game.getPlayer(target));
                         }
                         case "startGame" -> game.startGame();
-                        case "changeSetting" -> game.changeSetting(actionObj.getString("key"), actionObj.getString("value"));
+                        case "changeSettings" -> {
+                            try {
+                                TomlSettingsManager.changeSettingsFromJson(actionObj.getJsonObject("settings"), game);
+                            } catch (NumberFormatException e) {
+                                log.error(e.getStackTrace());
+                            }
+                            broadcastInfo();
+                        }
                         default -> log.debug("Action '{}' not recognised.", action);
                     }
                 }
@@ -117,5 +128,10 @@ public class GameWSServer extends WebSocketServer {
     @Override
     public void onStart() { 
         log.info("SERVER STARTED");
+    }
+
+    private void broadcastInfo() {
+        broadcast("[{\"type\": \"playerlist\",\"data\": [\"" + getConnections().stream().map(con -> ((Player) con.getAttachment()).id).collect(Collectors.joining("\",\"")) + "\"]}," +
+                "{\"type\": \"settings\", \"data\": " + TomlSettingsManager.readSettingsAsJson() + "}]");
     }
 }
