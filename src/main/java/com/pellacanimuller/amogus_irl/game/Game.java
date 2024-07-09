@@ -5,7 +5,6 @@ import com.pellacanimuller.amogus_irl.game.players.Healer;
 import com.pellacanimuller.amogus_irl.game.players.Impostor;
 import com.pellacanimuller.amogus_irl.game.players.Player;
 import com.pellacanimuller.amogus_irl.net.GameWSServer;
-import com.pellacanimuller.amogus_irl.util.TomlSettingsManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -182,58 +181,15 @@ public class Game {
         }
     }
 
-    public void changeSetting(String key, String value) throws NumberFormatException {
+    public void updateSetting(String key, String value) {
         switch (key) {
-            case "impostorCount" -> {
-                IMPOSTOR_COUNT = Integer.decode(value);
-                Map<String, Object> settings = new HashMap<>();
-                Map<String, Object> players = new HashMap<>();
-                players.put("impostor_count", value);
-                settings.put("players", players);
-                TomlSettingsManager.writeSettings(settings);
-            }
-            case "crewmateCount" -> {
-                CREWMATE_COUNT = Integer.decode(value);
-                Map<String, Object> settings = new HashMap<>();
-                Map<String, Object> players = new HashMap<>();
-                players.put("crewmate_count", value);
-                settings.put("players", players);
-                TomlSettingsManager.writeSettings(settings);
-            }
-            case "healerCount" -> {
-                HEALER_COUNT = Integer.decode(value);
-                Map<String, Object> settings = new HashMap<>();
-                Map<String, Object> players = new HashMap<>();
-                players.put("healer_count", value);
-                settings.put("players", players);
-                TomlSettingsManager.writeSettings(settings);
-            }
-            case "taskCount" -> {
-                TASK_COUNT = Integer.decode(value);
-                Map<String, Object> settings = new HashMap<>();
-                Map<String, Object> players = new HashMap<>();
-                players.put("task_count", value);
-                settings.put("players", players);
-                TomlSettingsManager.writeSettings(settings);
-            }
-            case "tasksPerPlayer" -> {
-                TASKS_PER_PLAYER = Integer.decode(value);
-                Map<String, Object> settings = new HashMap<>();
-                Map<String, Object> players = new HashMap<>();
-                players.put("tasks_per_player", value);
-                settings.put("players", players);
-                TomlSettingsManager.writeSettings(settings);
-            }
-            case "maxPlayers" -> {
-                MAX_PLAYERS = Integer.decode(value);
-                Map<String, Object> settings = new HashMap<>();
-                Map<String, Object> players = new HashMap<>();
-                players.put("max_players", value);
-                settings.put("players", players);
-                TomlSettingsManager.writeSettings(settings);
-            }
+            case "impostors" -> IMPOSTOR_COUNT = Integer.decode(value);
+            case "crewmates" -> CREWMATE_COUNT = Integer.decode(value);
+            case "healers" -> HEALER_COUNT = Integer.decode(value);
+            case "total" -> TASK_COUNT = Integer.decode(value);
+            case "perPlayer" -> TASKS_PER_PLAYER = Integer.decode(value);
+            case "maxPlayers" -> MAX_PLAYERS = Integer.decode(value);
+            default -> log.error("Cannot parse {}", key);
         }
     }
-
-
 }
