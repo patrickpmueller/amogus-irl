@@ -23,4 +23,9 @@ public class Crewmate extends Player {
             // TODO Run callback for completed tasks
         }
     }
+
+    @Override
+    public Player copy() {
+        return super.copy();
+    }
 }

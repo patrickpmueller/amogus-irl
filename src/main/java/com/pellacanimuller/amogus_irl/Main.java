@@ -34,6 +34,7 @@ public class Main {
                     Thread.sleep(4000);
                     return;
                 }
+                case "reset" -> gameserver.resetGame(new Game());
             }
         }
     }

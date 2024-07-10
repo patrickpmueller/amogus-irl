@@ -20,4 +20,8 @@ public class Player {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
+    public Player copy() {
+        return new Player(id);
+    }
 }

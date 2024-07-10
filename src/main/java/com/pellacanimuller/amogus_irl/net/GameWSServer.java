@@ -22,13 +22,19 @@ import java.util.stream.Collectors;
  * GameWSServer
  */
 public class GameWSServer extends WebSocketServer {
-    private final Game game;
+    private Game game;
     private final static Logger log = LogManager.getLogger( GameWSServer.class );
 
     public GameWSServer(InetSocketAddress addr, Game game) {
         super(addr);
         this.game = game;
         game.acknowledgeServerStarted(this);
+    }
+
+    public void resetGame(Game game) {
+        this.game = game;
+        this.getConnections()
+                .forEach(conn -> conn.setAttachment(game.addExistingPlayer(conn.getAttachment())));
     }
 
     @Override

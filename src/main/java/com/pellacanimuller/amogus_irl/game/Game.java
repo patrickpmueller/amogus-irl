@@ -125,13 +125,15 @@ public class Game {
     }
 
     public Player addPlayer() throws IllegalStateException {
+        return addExistingPlayer(new Player(""));
+    }
+
+    public Player addExistingPlayer(Player existing) {
         if (players.size() >= MAX_PLAYERS) {
             throw new IllegalStateException("Cannot add more players, lobby full already");
         }
 
-        // Create player and increment count
-        Player player = new Player("");
-        // Add and return player
+        Player player = existing.copy();
         players.add(player);
         return player;
     }
