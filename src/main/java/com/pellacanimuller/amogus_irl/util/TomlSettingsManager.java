@@ -35,14 +35,15 @@ public class TomlSettingsManager {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void mergeSettings(Map<String, Object> existingSettings, Map<String, Object> newSettings) {
-        Map<String, Object> flatExisting = flattenMap(existingSettings);
-        Map<String, Object> flatNew = flattenMap(newSettings);
-
-        flatExisting.putAll(flatNew);
-
-        existingSettings.clear();
-        existingSettings.putAll(flatExisting);
+        newSettings.forEach((key, value) -> {
+            if (value instanceof Map && existingSettings.get(key) instanceof Map) {
+                mergeSettings((Map<String, Object>) existingSettings.get(key), (Map<String, Object>) value);
+            } else {
+                existingSettings.put(key, value);
+            }
+        });
     }
 
     public static Toml readSettings() {
