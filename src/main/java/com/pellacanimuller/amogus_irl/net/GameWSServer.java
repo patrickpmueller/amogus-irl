@@ -35,6 +35,8 @@ public class GameWSServer extends WebSocketServer {
         this.game = game;
         this.getConnections()
                 .forEach(conn -> conn.setAttachment(game.addExistingPlayer(conn.getAttachment())));
+        log.info("GAME RESET");
+        broadcastInfo();
     }
 
     @Override
@@ -53,7 +55,7 @@ public class GameWSServer extends WebSocketServer {
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
         game.removePlayer(conn.getAttachment());
         log.info("Player disconnected");
-        broadcast("[{\"type\": \"playerlist\",\"data\": [\"" + getConnections().stream().map(con -> ((Player) con.getAttachment()).id).collect(Collectors.joining("\",\"")) + "\"]}]");
+        broadcastInfo();
     }
 
     @Override
@@ -103,9 +105,10 @@ public class GameWSServer extends WebSocketServer {
                         }
                         case "setup" -> {
                             String playerID = actionObj.getString("playerID");
-                            if (!Objects.equals(playerID, "in_settings")) {
-                                ((Player) conn.getAttachment()).id = playerID;
+                            if (Objects.equals(playerID, "in_settings")) {
+                                game.removePlayer(conn.getAttachment());
                             }
+                            ((Player) conn.getAttachment()).id = playerID;
                             broadcastInfo();
                         }
                         case "taskCompleted" -> {

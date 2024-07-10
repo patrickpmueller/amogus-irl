@@ -225,6 +225,6 @@ public class Game {
             }
         });
 
-        return builder.toString();
+        return builder.build().toString();
     }
 }
