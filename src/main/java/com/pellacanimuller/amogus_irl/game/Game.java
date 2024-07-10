@@ -5,6 +5,7 @@ import com.pellacanimuller.amogus_irl.game.players.Healer;
 import com.pellacanimuller.amogus_irl.game.players.Impostor;
 import com.pellacanimuller.amogus_irl.game.players.Player;
 import com.pellacanimuller.amogus_irl.net.GameWSServer;
+import com.pellacanimuller.amogus_irl.util.TomlSettingsManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,24 +28,23 @@ enum Role {
 public class Game {
     private final static Logger log = LogManager.getLogger(Game.class);
 
-    public int MAX_PLAYERS = 8; // TODO read config
-    public int TASKS_PER_PLAYER = 4;
-    public int IMPOSTOR_COUNT = 1;
-    public int CREWMATE_COUNT = 2;
-    public int HEALER_COUNT = 1;
-    public int TASK_COUNT = 8;
+    public int MAX_PLAYERS;
+    public int TASKS_PER_PLAYER;
+    public int IMPOSTOR_COUNT;
+    public int CREWMATE_COUNT;
+    public int HEALER_COUNT;
+    public int TASK_COUNT;
 
-    public List<Player> players = new ArrayList<>(MAX_PLAYERS);
-    public List<Player> alive = new ArrayList<>(MAX_PLAYERS);
+    public List<Player> players;
+    public List<Player> alive;
     public Meeting currentMeeting = null;
     private GameState gameState = GameState.LOBBY;
     public Task[] tasks;
     private GameWSServer wsServer;
 
-    private static final long SEC = 1000;
-
-
     public Game() {
+        updateSettings(TomlSettingsManager.readSettingsAsMap());
+
         // Create Tasks array
         tasks = new Task[TASK_COUNT];
 
@@ -185,16 +185,23 @@ public class Game {
         }
     }
 
-    public void updateSetting(String key, String value) {
-        switch (key) {
-            case "impostors" -> IMPOSTOR_COUNT = Integer.parseInt(value);
-            case "crewmates" -> CREWMATE_COUNT = Integer.parseInt(value);
-            case "healers" -> HEALER_COUNT = Integer.parseInt(value);
-            case "total" -> TASK_COUNT = Integer.parseInt(value);
-            case "perPlayer" -> TASKS_PER_PLAYER = Integer.parseInt(value);
-            case "maxPlayers" -> MAX_PLAYERS = Integer.parseInt(value);
-            default -> log.error("Cannot parse {}", key);
-        }
+    public void updateSettings(Map<String, Object> settings) {
+        TomlSettingsManager.flattenMap(settings, ".").forEach((key, value) -> {
+            switch (value) {
+                case Integer i -> {
+                    switch (key) {
+                        case "roles.impostors" -> IMPOSTOR_COUNT = i;
+                        case "roles.crewmates" -> CREWMATE_COUNT = i;
+                        case "roles.healers" -> HEALER_COUNT = i;
+                        case "tasks.total" -> TASK_COUNT = i;
+                        case "tasks.perPlayer" -> TASKS_PER_PLAYER = i;
+                        case "maxPlayers" -> MAX_PLAYERS = i;
+                        default -> log.error("Cannot parse int value: {}", key);
+                    }
+                }
+                default -> throw new IllegalStateException("Unexpected value: " + value);
+            }
+        });
     }
 
     private String getRolesAsJson() {

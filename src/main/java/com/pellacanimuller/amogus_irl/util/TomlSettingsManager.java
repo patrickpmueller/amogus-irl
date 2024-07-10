@@ -57,18 +57,8 @@ public class TomlSettingsManager {
         return mapToJson(readSettings().toMap()).toString();
     }
 
-
-    public static void changeSettingsFromJson(JsonObject json, Game game) throws IllegalArgumentException {
-        Map<String, Object> settings = new HashMap<>();
-        Map<String, Object> roles = new HashMap<>();
-        Map<String, Object> tasks = new HashMap<>();
-
-        settings.put("roles", roles);
-        settings.put("tasks", tasks);
-
-        json.forEach((key, value) -> updateVars(key, value, settings, game));
-
-        TomlSettingsManager.writeSettings(settings);
+    public static Map<String, Object> readSettingsAsMap() {
+        return flattenMap(readSettings().toMap(), ".");
     }
 
 
@@ -84,37 +74,46 @@ public class TomlSettingsManager {
     }
 
 
-    private static Map<String, Object> convertJsonObjectToMap(JsonObject jsonObject, Game game) {
+    public static void changeSettingsFromJson(JsonObject jsonSettings, Game game) throws IllegalArgumentException {
+        Map<String, Object> settings = new HashMap<>();
+        Map<String, Object> roles = new HashMap<>();
+        Map<String, Object> tasks = new HashMap<>();
+
+        settings.put("roles", roles);
+        settings.put("tasks", tasks);
+
+        jsonSettings.forEach((key, value) -> settings.put(key, convertValue(value)));
+
+        game.updateSettings(settings);
+
+        TomlSettingsManager.writeSettings(settings);
+    }
+
+
+    private static Map<String, Object> convertJsonObjectToMap(JsonObject jsonObject) {
         Map<String, Object> map = new HashMap<>();
         jsonObject.forEach((key, value) -> {
             if (value.getValueType() == JsonValue.ValueType.OBJECT) {
-                map.put(key, convertJsonObjectToMap(value.asJsonObject(), game));
+                map.put(key, convertJsonObjectToMap(value.asJsonObject()));
             } else {
-                updateVars(key, value, map, game);
+                map.put(key, convertValue(value));
             }
         });
         return map;
     }
 
 
-    private static void updateVars(String key, JsonValue value, Map<String, Object> settings, Game game) {
-        switch (value.getValueType()) {
-            case OBJECT -> settings.put(key, convertJsonObjectToMap(value.asJsonObject(), game));
-            case STRING -> log.info("Strings not used for config yet");
-            case NUMBER -> {
-
-                switch (key) {
-                    case "impostors", "crewmates", "healers", "total", "perPlayer", "maxPlayers" -> settings.put(key, Integer.parseInt(value.toString()));
-                    default -> {
-                        log.error("Unknown key: {}", key);
-                        return;
-                    }
-                }
-                game.updateSetting(key, value.toString());
-            }
-            case TRUE, FALSE -> log.info("Boolean values not yet used in config");
-            case NULL, ARRAY -> throw new IllegalArgumentException("Cannot parse " + value.getValueType());
-        }
+    private static Object convertValue(JsonValue value) {
+        return switch (value.getValueType()) {
+            case OBJECT -> convertJsonObjectToMap(value.asJsonObject());
+            case STRING -> value.toString();
+            case NUMBER -> Integer.parseInt(value.toString());
+            case TRUE, FALSE -> Boolean.parseBoolean(value.toString());
+            case NULL -> null;
+            case ARRAY -> value.asJsonArray().stream()
+                    .map(TomlSettingsManager::convertValue)
+                    .toList();
+        };
     }
 
 
