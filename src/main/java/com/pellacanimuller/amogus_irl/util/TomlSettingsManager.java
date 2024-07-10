@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TomlSettingsManager {
 
@@ -35,24 +36,13 @@ public class TomlSettingsManager {
     }
 
     public static void mergeSettings(Map<String, Object> existingSettings, Map<String, Object> newSettings) {
-        for (Map.Entry<String, Object> entry : newSettings.entrySet()) {
-            if (entry.getValue() instanceof Map) {
-                existingSettings.merge(entry.getKey(), entry.getValue(), (oldVal, newVal) -> {
-                    if (oldVal instanceof Map) {
-                        @SuppressWarnings("unchecked")
-                        Map<String, Object> oldMap = (Map<String, Object>) oldVal;
-                        @SuppressWarnings("unchecked")
-                        Map<String, Object> newMap = (Map<String, Object>) newVal;
-                        Map<String, Object> mergedMap = new HashMap<>(oldMap);
-                        mergeSettings(mergedMap, newMap);
-                        return mergedMap;
-                    }
-                    return newVal;
-                });
-            } else {
-                existingSettings.put(entry.getKey(), entry.getValue());
-            }
-        }
+        Map<String, Object> flatExisting = flattenMap(existingSettings);
+        Map<String, Object> flatNew = flattenMap(newSettings);
+
+        flatExisting.putAll(flatNew);
+
+        existingSettings.clear();
+        existingSettings.putAll(flatExisting);
     }
 
     public static Toml readSettings() {
@@ -65,6 +55,84 @@ public class TomlSettingsManager {
 
     public static String readSettingsAsJson() {
         return mapToJson(readSettings().toMap()).toString();
+    }
+
+
+    public static void changeSettingsFromJson(JsonObject json, Game game) throws IllegalArgumentException {
+        Map<String, Object> settings = new HashMap<>();
+        Map<String, Object> roles = new HashMap<>();
+        Map<String, Object> tasks = new HashMap<>();
+
+        settings.put("roles", roles);
+        settings.put("tasks", tasks);
+
+        json.forEach((key, value) -> updateVars(key, value, settings, game));
+
+        TomlSettingsManager.writeSettings(settings);
+    }
+
+
+    public static Map<String, Object> flattenMap(Map<String, Object> map) {
+        return flattenMap(map, null);
+    }
+
+
+    public static Map<String, Object> flattenMap(Map<String, Object> map, String separator) {
+        return map.entrySet().stream()
+                .flatMap(entry -> flatten(entry.getKey(), entry.getValue(), separator).entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+
+    private static Map<String, Object> convertJsonObjectToMap(JsonObject jsonObject, Game game) {
+        Map<String, Object> map = new HashMap<>();
+        jsonObject.forEach((key, value) -> {
+            if (value.getValueType() == JsonValue.ValueType.OBJECT) {
+                map.put(key, convertJsonObjectToMap(value.asJsonObject(), game));
+            } else {
+                updateVars(key, value, map, game);
+            }
+        });
+        return map;
+    }
+
+
+    private static void updateVars(String key, JsonValue value, Map<String, Object> settings, Game game) {
+        switch (value.getValueType()) {
+            case OBJECT -> settings.put(key, convertJsonObjectToMap(value.asJsonObject(), game));
+            case STRING -> log.info("Strings not used for config yet");
+            case NUMBER -> {
+
+                switch (key) {
+                    case "impostors", "crewmates", "healers", "total", "perPlayer", "maxPlayers" -> settings.put(key, Integer.parseInt(value.toString()));
+                    default -> {
+                        log.error("Unknown key: {}", key);
+                        return;
+                    }
+                }
+                game.updateSetting(key, value.toString());
+            }
+            case TRUE, FALSE -> log.info("Boolean values not yet used in config");
+            case NULL, ARRAY -> throw new IllegalArgumentException("Cannot parse " + value.getValueType());
+        }
+    }
+
+
+    private static Map<String, Object> flatten(String prefix, Object value, String separator) {
+        Map<String, Object> result = new HashMap<>();
+
+        if (value instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> nestedMap = (Map<String, Object>) value;
+            nestedMap.forEach((key, val) -> {
+                String newKey = separator != null ? prefix + separator + key : key;
+                result.putAll(flatten(newKey, val, separator));
+            });
+        } else {
+            result.put(prefix, value);
+        }
+
+        return result;
     }
 
 
@@ -85,51 +153,5 @@ public class TomlSettingsManager {
         }
 
         return builder.build();
-    }
-
-
-    public static void changeSettingsFromJson(JsonObject json, Game game) throws IllegalArgumentException {
-        Map<String, Object> settings = new HashMap<>();
-        Map<String, Object> roles = new HashMap<>();
-        Map<String, Object> tasks = new HashMap<>();
-
-        settings.put("roles", roles);
-        settings.put("tasks", tasks);
-
-        json.forEach((key, value) -> updateVars(key, value, settings, game));
-
-        TomlSettingsManager.writeSettings(settings);
-    }
-
-    private static Map<String, Object> convertJsonObjectToMap(JsonObject jsonObject, Game game) {
-        Map<String, Object> map = new HashMap<>();
-        jsonObject.forEach((key, value) -> {
-            if (value.getValueType() == JsonValue.ValueType.OBJECT) {
-                map.put(key, convertJsonObjectToMap(value.asJsonObject(), game));
-            } else {
-                updateVars(key, value, map, game);
-            }
-        });
-        return map;
-    }
-
-    private static void updateVars(String key, JsonValue value, Map<String, Object> settings, Game game) {
-        switch (value.getValueType()) {
-            case OBJECT -> settings.put(key, convertJsonObjectToMap(value.asJsonObject(), game));
-            case STRING -> log.info("Strings not used for config yet");
-            case NUMBER -> {
-
-                switch (key) {
-                    case "impostors", "crewmates", "healers", "total", "perPlayer", "maxPlayers" -> settings.put(key, Integer.parseInt(value.toString()));
-                    default -> {
-                        log.error("Unknown key: {}", key);
-                        return;
-                    }
-                }
-                game.updateSetting(key, value.toString());
-            }
-            case TRUE, FALSE -> log.info("Boolean values not yet used in config");
-            case NULL, ARRAY -> throw new IllegalArgumentException("Cannot parse " + value.getValueType());
-        }
     }
 }
