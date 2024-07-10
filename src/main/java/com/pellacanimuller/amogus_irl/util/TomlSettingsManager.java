@@ -58,7 +58,11 @@ public class TomlSettingsManager {
     }
 
     public static Map<String, Object> readSettingsAsMap() {
-        return flattenMap(readSettings().toMap(), ".");
+        return flattenMap(readSettings().toMap(), ".").entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue() instanceof Long ? ((Long) entry.getValue()).intValue() : entry.getValue()
+                ));
     }
 
 
