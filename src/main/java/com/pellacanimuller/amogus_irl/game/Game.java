@@ -8,6 +8,8 @@ import com.pellacanimuller.amogus_irl.net.GameWSServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 import java.util.*;
 
 enum GameState {
@@ -109,6 +111,10 @@ public class Game {
             return new_player;
         });
 
+        alive = new ArrayList<>(players);
+
+        wsServer.broadcast("[{\"type\":\"startGame\", \"roles\": " + getRolesAsJson() + "}]");
+
         gameState = GameState.INGAME;
     }
 
@@ -189,5 +195,20 @@ public class Game {
             case "maxPlayers" -> MAX_PLAYERS = Integer.parseInt(value);
             default -> log.error("Cannot parse {}", key);
         }
+    }
+
+    private String getRolesAsJson() {
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+
+        players.forEach((player) -> {
+            switch (player) {
+                case Healer _ -> builder.add(player.id, "healer");
+                case Crewmate _ -> builder.add(player.id, "crewmate");
+                case Impostor _ -> builder.add(player.id, "impostor");
+                default -> throw new IllegalStateException("Unexpected value: " + player);
+            }
+        });
+
+        return builder.toString();
     }
 }

@@ -109,10 +109,7 @@ public class GameWSServer extends WebSocketServer {
                             String target = actionObj.getString("player");
                             game.alive.remove(game.getPlayer(target));
                         }
-                        case "startGame" -> {
-                            game.startGame();
-                            broadcast("[{\"type\":\"startGame\"}]");
-                        }
+                        case "startGame" -> game.startGame();
                         case "changeSettings" -> {
                             try {
                                 TomlSettingsManager.changeSettingsFromJson(actionObj.getJsonObject("settings"), game);
