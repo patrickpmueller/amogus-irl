@@ -188,7 +188,8 @@ public class Game {
     public void updateSettings(Map<String, Object> settings) {
         TomlSettingsManager.flattenMap(settings, ".").forEach((key, value) -> {
             switch (value) {
-                case Integer i -> {
+                case Long l -> {
+                    int i = l.intValue();
                     switch (key) {
                         case "roles.impostors" -> IMPOSTOR_COUNT = i;
                         case "roles.crewmates" -> CREWMATE_COUNT = i;
