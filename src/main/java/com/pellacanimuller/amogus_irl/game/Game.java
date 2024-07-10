@@ -56,6 +56,11 @@ public class Game {
         }
     }
 
+
+    public boolean gameRunning() {
+        return gameState != GameState.LOBBY;
+    }
+
     public void startGame() {
         if (IMPOSTOR_COUNT + CREWMATE_COUNT + HEALER_COUNT != players.size()) {
             log.info("Cannot start game, wrong player count");

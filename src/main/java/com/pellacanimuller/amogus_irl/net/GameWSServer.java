@@ -41,6 +41,10 @@ public class GameWSServer extends WebSocketServer {
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
+        if (game.gameRunning()) {
+            conn.setAttachment(new Player(""));
+            return;
+        }
         try {
             Player player = game.addPlayer();
             conn.setAttachment(player);
@@ -53,9 +57,13 @@ public class GameWSServer extends WebSocketServer {
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        game.removePlayer(conn.getAttachment());
-        log.info("Player disconnected");
-        broadcastInfo();
+        if (game.gameRunning()) {
+            log.info("Lost connection to {}", ((Player) conn.getAttachment()).id);
+        } else {
+            game.removePlayer(conn.getAttachment());
+            log.info("Player disconnected");
+            broadcastInfo();
+        }
     }
 
     @Override
@@ -105,11 +113,19 @@ public class GameWSServer extends WebSocketServer {
                         }
                         case "setup" -> {
                             String playerID = actionObj.getString("playerID");
-                            if (Objects.equals(playerID, "in_settings")) {
-                                game.removePlayer(conn.getAttachment());
+                            if (game.gameRunning()) {
+                                game.players.forEach(currentPlayer -> {
+                                    if (Objects.equals(player.id, playerID)) {
+                                        conn.setAttachment(currentPlayer);
+                                    }
+                                });
+                            } else {
+                                if (Objects.equals(playerID, "in_settings")) {
+                                    game.removePlayer(conn.getAttachment());
+                                }
+                                ((Player) conn.getAttachment()).id = playerID;
+                                broadcastInfo();
                             }
-                            ((Player) conn.getAttachment()).id = playerID;
-                            broadcastInfo();
                         }
                         case "taskCompleted" -> {
                             String id = actionObj.getString("id");
@@ -140,7 +156,7 @@ public class GameWSServer extends WebSocketServer {
     }
 
     @Override
-    public void onStart() { 
+    public void onStart() {
         log.info("SERVER STARTED");
     }
 
