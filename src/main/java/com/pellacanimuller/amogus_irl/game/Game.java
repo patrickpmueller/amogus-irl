@@ -45,6 +45,8 @@ public class Game {
     public Game() {
         updateSettings(TomlSettingsManager.readSettingsAsMap());
 
+        players = new ArrayList<>(MAX_PLAYERS);
+
         // Create Tasks array
         tasks = new Task[TASK_COUNT];
 
@@ -122,7 +124,11 @@ public class Game {
         wsServer = server;
     }
 
-    public Player addPlayer() {
+    public Player addPlayer() throws IllegalStateException {
+        if (players.size() >= MAX_PLAYERS) {
+            throw new IllegalStateException("Cannot add more players, lobby full already");
+        }
+
         // Create player and increment count
         Player player = new Player("");
         // Add and return player

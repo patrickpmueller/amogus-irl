@@ -33,9 +33,14 @@ public class GameWSServer extends WebSocketServer {
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        Player player = game.addPlayer();
-        conn.setAttachment(player);
-        log.info("Player connected");
+        try {
+            Player player = game.addPlayer();
+            conn.setAttachment(player);
+            log.info("Player connected");
+        } catch (IllegalStateException e) {
+           log.info("Cannot add another player, lobby full");
+           conn.close();
+        }
     }
 
     @Override
