@@ -34,7 +34,9 @@ public class GameWSServer extends WebSocketServer {
     public void resetGame(Game game) {
         this.game = game;
         this.getConnections()
-                .forEach(conn -> conn.setAttachment(game.addExistingPlayer(conn.getAttachment())));
+                .forEach(conn -> conn.setAttachment(
+                        Objects.equals(((Player) conn.getAttachment()).id, "in_settings") || Objects.equals(((Player) conn.getAttachment()).id, "")
+                                ? null : game.addExistingPlayer(conn.getAttachment())));
         log.info("GAME RESET");
         broadcastInfo();
     }
