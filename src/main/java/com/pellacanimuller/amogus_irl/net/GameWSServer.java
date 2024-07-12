@@ -131,8 +131,8 @@ public class GameWSServer extends WebSocketServer {
                                     game.removePlayer(conn.getAttachment());
                                 }
                                 ((Player) conn.getAttachment()).id = playerID;
-                                broadcastInfo();
                             }
+                            broadcastInfo();
                         }
                         case "taskCompleted" -> {
                             String id = actionObj.getString("id");
