@@ -108,7 +108,7 @@ public class Game {
             Player new_player = switch (role) {
                 case CREWMATE -> new Crewmate(old_player, task_set);
                 case HEALER -> new Healer(old_player, task_set);
-                case IMPOSTOR -> new Impostor(old_player);
+               case IMPOSTOR -> new Impostor(old_player, task_set);
                 case null -> {
                     log.error("Could not start game, no role in array");
                     throw new RuntimeException();
@@ -164,7 +164,18 @@ public class Game {
     public void startMeeting(Player starter, String deathID) {
         // Do not allow meeting to start if not ingame
         if (gameState != GameState.INGAME) {
-            throw new IllegalStateException(new IllegalAccessException("Cannot start meeting, not ingame"));
+            throw new IllegalStateException("Cannot start meeting, not ingame");
+        }
+
+        if (!alive.contains(starter)) {
+            throw new IllegalStateException("Cannot start meeting, starter not alive");
+        }
+        Optional<Player> deathOptional = players.stream()
+                .filter(player -> deathID.equals(player.id))
+                .findFirst();
+
+        if (deathOptional.isEmpty() && !deathID.contains("emergency")) {
+            throw new IllegalStateException("Cannot start meeting, player doesn't exist");
         }
 
         // start meeting depending on if it is report or emergency
@@ -175,6 +186,8 @@ public class Game {
             log.debug("Starting death report meeting, death of {}", deathID);
             currentMeeting = new Meeting(this, getPlayer(deathID));
         }
+
+        wsServer.broadcast("[{ \"type\": \"meeting\", \"data\": \"" + deathID +  "\" }]");
         gameState = GameState.MEETING;
     }
 

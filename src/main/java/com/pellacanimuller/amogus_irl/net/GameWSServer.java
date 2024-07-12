@@ -1,6 +1,9 @@
 package com.pellacanimuller.amogus_irl.net;
 
 import com.pellacanimuller.amogus_irl.game.Game;
+import com.pellacanimuller.amogus_irl.game.Task;
+import com.pellacanimuller.amogus_irl.game.players.Crewmate;
+import com.pellacanimuller.amogus_irl.game.players.Impostor;
 import com.pellacanimuller.amogus_irl.game.players.Player;
 import com.pellacanimuller.amogus_irl.util.TomlSettingsManager;
 import org.apache.logging.log4j.LogManager;
@@ -15,6 +18,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import java.io.StringReader;
 import java.net.InetSocketAddress;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -117,17 +121,18 @@ public class GameWSServer extends WebSocketServer {
                             String playerID = actionObj.getString("playerID");
                             if (game.gameRunning()) {
                                 game.players.forEach(currentPlayer -> {
-                                    if (Objects.equals(player.id, playerID)) {
+                                    if (Objects.equals(currentPlayer.id, playerID)) {
                                         conn.setAttachment(currentPlayer);
                                     }
                                 });
+                                sendTasks(conn);
                             } else {
                                 if (Objects.equals(playerID, "in_settings")) {
                                     game.removePlayer(conn.getAttachment());
                                 }
                                 ((Player) conn.getAttachment()).id = playerID;
-                                broadcastInfo();
                             }
+                            broadcastInfo();
                         }
                         case "taskCompleted" -> {
                             String id = actionObj.getString("id");
@@ -155,6 +160,16 @@ public class GameWSServer extends WebSocketServer {
                 }
             );
         }
+    }
+
+    private void sendTasks(WebSocket socket) {
+        Task[] tasks;
+        if (socket.getAttachment() instanceof Impostor) {
+            tasks = ((Impostor) socket.getAttachment()).mockTasks.toArray(new Task[0]);
+        } else {
+            tasks = ((Crewmate) socket.getAttachment()).tasks.toArray(new Task[0]);
+        }
+        socket.send("[{\"type\": \"tasks\", \"data\": [" + Arrays.toString(tasks) + "]}]");
     }
 
     @Override

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Game</title>
+		<link href="style.css" rel="stylesheet" />    
+		<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+		<script src="main.js"></script>
+	</head>
+	<body>
+		<div class="wrapper">
+			<ul class="list" id="tasklist">
+				<li id="t1" onclick="alert('test')">Hello World!</li>
+				Not connected to server
+			</ul>
+			<ul class="list" id="playerlist">
+				Not connected to server
+			</ul>
+			<button id="report" class="button" onclick="reportBody();">Report dead body</button>
+			<button id="death" class="button" onclick="playerKilled();">I was killed</button>
+		</div>	
+	</body>
+</html>

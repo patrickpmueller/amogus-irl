@@ -1,0 +1,52 @@
+@import "/styles/body.css";
+@import "/styles/button.css";
+@import "/styles/nord.css";
+@import "/styles/input.css";
+
+.wrapper {
+  display: grid;
+  place-items: center;
+  grid-template-rows: calc(50% - 12.5px) 25px calc(50% - 12.5px);
+  grid-template-columns: 3fr 2fr;
+  height: calc(100% - 50px);
+  width: calc(100% - 50px);
+  margin: 25px;
+}
+
+.list {
+  background-color: var(--nord1);
+  border: 2px var(--nord3) solid;
+  border-radius: 8px;
+  font-size: 3rem;
+  padding: 4rem;
+}
+
+.player {
+  font-size: 2rem;
+  font-family: sans-serif;
+}
+
+#buffer {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 2;
+  grid-row-end: 3;
+}
+
+#start {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 3;
+  grid-row-end: 4;
+}
+
+#join {
+  font-size: 1.5rem;
+  margin: 0.4em;
+}
+
+.nameBox {
+  display: grid;
+  place-items: center;
+  row-gap: 1.5em;
+}
