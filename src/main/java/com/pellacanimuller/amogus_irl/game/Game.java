@@ -164,7 +164,18 @@ public class Game {
     public void startMeeting(Player starter, String deathID) {
         // Do not allow meeting to start if not ingame
         if (gameState != GameState.INGAME) {
-            throw new IllegalStateException(new IllegalAccessException("Cannot start meeting, not ingame"));
+            throw new IllegalStateException("Cannot start meeting, not ingame");
+        }
+
+        if (!alive.contains(starter)) {
+            throw new IllegalStateException("Cannot start meeting, starter not alive");
+        }
+        Optional<Player> deathOptional = players.stream()
+                .filter(player -> deathID.equals(player.id))
+                .findFirst();
+
+        if (deathOptional.isEmpty() && !deathID.contains("emergency")) {
+            throw new IllegalStateException("Cannot start meeting, player doesn't exist");
         }
 
         // start meeting depending on if it is report or emergency
