@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class TomlSettingsManager {
 
-    private static final String SETTINGS_FILE = "src/main/settings/settings.toml";
+    private static final String SETTINGS_FILE = "config/settings.toml";
     private final static Logger log = LogManager.getLogger(TomlSettingsManager.class);
 
     public static void writeSettings(Map<String, Object> settings) {
