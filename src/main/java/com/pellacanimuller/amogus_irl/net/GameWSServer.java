@@ -121,7 +121,7 @@ public class GameWSServer extends WebSocketServer {
                             String playerID = actionObj.getString("playerID");
                             if (game.gameRunning()) {
                                 game.players.forEach(currentPlayer -> {
-                                    if (Objects.equals(player.id, playerID)) {
+                                    if (Objects.equals(currentPlayer.id, playerID)) {
                                         conn.setAttachment(currentPlayer);
                                     }
                                 });
