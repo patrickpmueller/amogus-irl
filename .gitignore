@@ -49,3 +49,5 @@ node_modules/**
 
 ### TS ###
 ts/../*.js*
+
+*.svg
