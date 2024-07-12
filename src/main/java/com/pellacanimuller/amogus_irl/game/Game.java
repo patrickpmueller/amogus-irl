@@ -186,6 +186,8 @@ public class Game {
             log.debug("Starting death report meeting, death of {}", deathID);
             currentMeeting = new Meeting(this, getPlayer(deathID));
         }
+
+        wsServer.broadcast("[{ \"type\": \"meeting\", \"data\": \"" + deathID +  "\" }]");
         gameState = GameState.MEETING;
     }
 
