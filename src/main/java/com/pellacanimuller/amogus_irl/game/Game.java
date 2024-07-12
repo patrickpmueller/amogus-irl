@@ -108,7 +108,7 @@ public class Game {
             Player new_player = switch (role) {
                 case CREWMATE -> new Crewmate(old_player, task_set);
                 case HEALER -> new Healer(old_player, task_set);
-                case IMPOSTOR -> new Impostor(old_player);
+               case IMPOSTOR -> new Impostor(old_player, task_set);
                 case null -> {
                     log.error("Could not start game, no role in array");
                     throw new RuntimeException();
