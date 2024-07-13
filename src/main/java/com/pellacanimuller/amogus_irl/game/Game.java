@@ -214,19 +214,18 @@ public class Game {
 
     public void updateSettings(Map<String, Object> settings) {
         TomlSettingsManager.flattenMap(settings, ".").forEach((key, value) -> {
-            switch (value) {
-                case Integer i -> {
-                    switch (key) {
-                        case "roles.impostors" -> IMPOSTOR_COUNT = i;
-                        case "roles.crewmates" -> CREWMATE_COUNT = i;
-                        case "roles.healers" -> HEALER_COUNT = i;
-                        case "tasks.total" -> TASK_COUNT = i;
-                        case "tasks.perPlayer" -> TASKS_PER_PLAYER = i;
-                        case "maxPlayers" -> MAX_PLAYERS = i;
-                        default -> log.error("Cannot parse int value: {}", key);
-                    }
+            if (Objects.requireNonNull(value) instanceof Integer i) {
+                switch (key) {
+                    case "roles.impostors" -> IMPOSTOR_COUNT = i;
+                    case "roles.crewmates" -> CREWMATE_COUNT = i;
+                    case "roles.healers" -> HEALER_COUNT = i;
+                    case "tasks.total" -> TASK_COUNT = i;
+                    case "tasks.perPlayer" -> TASKS_PER_PLAYER = i;
+                    case "maxPlayers" -> MAX_PLAYERS = i;
+                    default -> log.error("Cannot parse int value: {}", key);
                 }
-                default -> throw new IllegalStateException("Unexpected value: " + value);
+            } else {
+                throw new IllegalStateException("Unexpected value: " + value);
             }
         });
     }
