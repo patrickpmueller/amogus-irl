@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import java.util.*;
 
@@ -120,7 +121,7 @@ public class Game {
 
         alive = new ArrayList<>(players);
 
-        wsServer.broadcast("[{\"type\":\"startGame\", \"roles\": " + getRolesAsJson() + "}]");
+        wsServer.broadcast("[{\"type\":\"startGame\", \"data\": " + getRolesAsJson() + "}]");
 
         gameState = GameState.INGAME;
     }
@@ -231,17 +232,19 @@ public class Game {
     }
 
     private String getRolesAsJson() {
-        JsonObjectBuilder builder = Json.createObjectBuilder();
+        JsonArrayBuilder array = Json.createArrayBuilder();
 
         players.forEach((player) -> {
+            JsonObjectBuilder obj = Json.createObjectBuilder();
             switch (player) {
-                case Healer _ -> builder.add(player.id, "healer");
-                case Crewmate _ -> builder.add(player.id, "crewmate");
-                case Impostor _ -> builder.add(player.id, "impostor");
+                case Healer _ -> obj.add("player", player.id).add("role", "healer");
+                case Crewmate _ -> obj.add("player", player.id).add("role", "crewmate");
+                case Impostor _ -> obj.add("player", player.id).add("role", "impostor");
                 default -> throw new IllegalStateException("Unexpected value: " + player);
             }
+            array.add(obj.build());
         });
 
-        return builder.build().toString();
+        return array.build().toString();
     }
 }
