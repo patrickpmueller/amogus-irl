@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "allowJs": true,
+    //"checkJs": true,
+    "sourceMap": true,
+    "outDir": "public/",
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": ["public/src/**/*.ts", "public/src/**/*.js"],
+  "exclude": ["node_modules"]
+}
