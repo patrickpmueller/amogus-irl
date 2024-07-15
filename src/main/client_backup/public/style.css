@@ -1,0 +1,13 @@
+@import "/styles/nord.css";
+@import "/styles/body.css";
+@import "/styles/button.css";
+
+.holder {
+  display: grid;
+  place-items: center;
+  grid-template-rows: calc(50% - 12.5px) 25px calc(50% - 12.5px);
+  height: calc(100% - 50px);
+  width: calc(100% - 50px);
+  margin: 25px;
+}
+

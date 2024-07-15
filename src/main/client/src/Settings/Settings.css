@@ -1,0 +1,12 @@
+#settings-wrapper {
+  row-gap: 5rem;
+}
+
+#homeButton {
+  width: 50%;
+  font-size: 2rem;
+} 
+
+#submit {
+  font-size: 2rem;
+}

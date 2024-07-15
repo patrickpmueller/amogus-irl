@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<!--suppress HtmlUnknownTarget -->
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+	<title>Lobby</title>
+		<link href="style.css" rel="stylesheet" />
+		<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+		<script src="/lobby/main.js"></script>
+	</head>
+	<body>
+		<div class="wrapper">
+			<ul id="playerlist" class="list">Not connected</ul>
+			<div class="nameBox">
+				<label for="name">Nickname: </label><input id="name" />
+				<button class="button" id="join">Join!</button>
+			</div>
+			<div id="buffer"></div>
+			<button id="start" class="button">Start Game!</button>
+		</div>	
+	</body>
+</html>

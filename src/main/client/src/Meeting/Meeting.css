@@ -1,0 +1,32 @@
+#title {
+	font-size: 5rem;
+}
+
+#meetingWrapper {
+	grid-template-rows: 1fr 10fr;
+}
+
+#playersBox {
+	display: grid;
+	row-gap: 2rem;
+	column-gap: 2rem;
+	grid-template-columns: 1fr 1fr;
+	padding: 0px;
+}
+
+.voteOption {
+	font-size: 1.5rem;
+	background-color: var(--nord1);
+	padding: 2em;
+	min-width: 8em;
+	text-align: center;
+	border: 2px var(--nord3) solid;
+	border-radius: 8px;
+	width: auto;
+	height: auto;
+}
+
+.dead {
+	color: var(--nord11);
+	border-color: var(--nord11);
+}
