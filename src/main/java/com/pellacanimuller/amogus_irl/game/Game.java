@@ -15,22 +15,27 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import java.util.*;
 
-enum GameState {
-    LOBBY,
-    INGAME,
-    MEETING
-}
 
-enum Role {
-    IMPOSTOR,
-    CREWMATE,
-    HEALER
-}
 
 /**
  * Represents a game instance with settings and player management for the Amogus IRL game.
  */
 public class Game {
+
+
+    public enum GameState {
+        LOBBY,
+        INGAME,
+        MEETING
+    }
+
+    public enum Role {
+        IMPOSTOR,
+        CREWMATE,
+        HEALER
+    }
+
+
     private final static Logger log = LogManager.getLogger(Game.class);
 
     /**
@@ -86,7 +91,7 @@ public class Game {
     /**
      * The current state of the game.
      */
-    private GameState gameState = GameState.LOBBY;
+    public GameState gameState = GameState.LOBBY;
 
     /**
      * Array of tasks in the game.
