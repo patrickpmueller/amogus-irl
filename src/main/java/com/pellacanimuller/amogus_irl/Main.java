@@ -7,6 +7,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.net.InetSocketAddress;
 import java.util.Scanner;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Executors;
 
 public class Main {
     private final static Logger log = LogManager.getLogger(Game.class);
@@ -21,7 +24,16 @@ public class Main {
         Game game = new Game();
         InetSocketAddress address = new InetSocketAddress("localhost", 8080);
         GameWSServer gameserver = new GameWSServer(address, game);
-        gameserver.start();
+
+        ScheduledExecutorService startGameExecutor = Executors.newScheduledThreadPool(1);
+        startGameExecutor.scheduleAtFixedRate(() -> {
+                try {
+                    gameserver.start();
+                    startGameExecutor.shutdown();
+                } catch (Throwable e) {
+                    log.info("Port already in use, retrying in 3 seconds...");
+                }
+        }, 0, 3, TimeUnit.SECONDS);
 
         Scanner in = new Scanner(System.in);
         while (in.hasNextLine()) {
@@ -29,10 +41,9 @@ public class Main {
             cmd = cmd.strip();
             switch (cmd) {
                 case "exit", "stop" -> {
-                    gameserver.stop();
                     log.info("Stopping Server");
-                    Thread.sleep(4000);
-                    return;
+                    gameserver.stop();
+                    Executors.newScheduledThreadPool(1).schedule(() -> System.exit(0), 4, TimeUnit.SECONDS);
                 }
                 case "reset-soft", "soft-reset" -> gameserver.resetGame(new Game(), false);
                 case "reset-hard", "hard-reset" -> gameserver.resetGame(new Game(), true);
