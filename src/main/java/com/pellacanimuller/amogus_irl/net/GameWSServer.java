@@ -1,6 +1,7 @@
 package com.pellacanimuller.amogus_irl.net;
 
 import com.pellacanimuller.amogus_irl.game.Game;
+import com.pellacanimuller.amogus_irl.game.players.Healer;
 import com.pellacanimuller.amogus_irl.game.players.Player;
 import com.pellacanimuller.amogus_irl.util.TomlSettingsManager;
 import org.apache.logging.log4j.LogManager;
@@ -166,9 +167,11 @@ public class GameWSServer extends WebSocketServer {
                                     log.info(e.getMessage());
                                 }
                             }
-                            case "kill" -> {
+                            case "heal" -> {
                                 String target = actionObj.getString("playerID");
-                                game.alive.remove(game.getPlayer(target));
+                                if (player instanceof Healer) {
+                                    game.healPlayer(game.getPlayer(target), (Healer) player);
+                                }
                             }
                             case "startGame" -> game.startGame();
                             case "changeSettings" -> {

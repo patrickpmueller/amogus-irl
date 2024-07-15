@@ -130,6 +130,17 @@ public class Game {
     }
 
     /**
+     * Kills a player in the game.
+     *
+     * @param player The player to kill.
+     */
+    public void healPlayer(Player player, Healer healer) {
+        if (healer != null && alive.contains(healer)) {
+            alive.add(player);
+        }
+    }
+
+    /**
      * Ends the current meeting and resets the game state.
      */
     public void endMeeting(Player winner) {
