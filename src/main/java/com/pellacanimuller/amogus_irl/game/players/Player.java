@@ -51,4 +51,15 @@ public class Player {
     public Player copy() {
         return new Player(id);
     }
+
+
+    /**
+     * Returns the ID of the player.
+     *
+     * @return the ID of the player
+     *
+     */
+    public String getId() {
+        return id;
+    }
 }
