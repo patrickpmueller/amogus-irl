@@ -4,10 +4,7 @@ import com.pellacanimuller.amogus_irl.game.players.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Represents a meeting within the game.
@@ -37,7 +34,11 @@ public class Meeting {
      * The logger instance for this class.
       */
     private static final Logger log = LogManager.getLogger(Meeting.class);
-    
+
+    /**
+     * Timer for managing the duration of the meeting.
+     */
+    private final Timer timer;
 
     /**
      * Constructs a new meeting with the given game and death player.
@@ -61,32 +62,62 @@ public class Meeting {
 
         // 'Skip' is the last element, null player
         votes.put(null, 0);
+
+        // Start the timer
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                endMeeting();
+            }
+        }, game.MEETING_DURATION * 1000L);
     }
 
-    public void vote(Player player) {
-        // If player is dead, do not allow voting
-        if (!game.alive.contains(player)) 
     /**
      * Casts a vote for the given player.
      *
      * @param vote The player to vote for.
      * @param voter The player who is casting the vote.
      */
+    public void vote(Player vote, Player voter) {
+        if (!game.alive.contains(voter)) {
+            log.debug("Cannot vote, player not alive: {}", voter.id);
             return;
-
-        // Add player to voters list and check if it is in there
-        if (!voters.add(player))
-            return;
-        
-
-        // 'Skip' if player == null
-        if (player == null) {
-            log.debug("Vote: Skipped");
-            votes.replace(null, votes.get(null));
-        } else {
-            // Add the votes to the map
-            log.debug("Vote: " + player.id);
-            votes.replace(player, votes.get(player));
         }
+
+        if (!voters.add(voter)) {
+            log.debug("Already voted: {}", voter.id);
+            return;
+        }
+
+        if (vote == null) {
+            log.debug("Vote: Skipped");
+            votes.replace(null, votes.get(null) + 1);
+            return;
+        }
+
+        if (!game.alive.contains(vote)) {
+            log.debug("Invalid vote: {}", vote.id);
+            return;
+        }
+
+        log.debug("Vote: {}", vote.id);
+        votes.replace(vote, votes.get(vote) + 1);
+
+        if (votes.size() == game.alive.size()) {
+            endMeeting();
+        }
+
+    }
+
+    /**
+     * Ends the meeting and determines the outcome based on the number of votes each player received.
+     */
+    private void endMeeting() {
+        log.debug("Meeting ended");
+        timer.cancel();
+        //noinspection OptionalGetWithoutIsPresent
+        game.alive.remove(votes.entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey());
+        game.endMeeting();
     }
 }

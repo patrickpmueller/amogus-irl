@@ -8,6 +8,7 @@ import com.pellacanimuller.amogus_irl.net.GameWSServer;
 import com.pellacanimuller.amogus_irl.util.TomlSettingsManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.java_websocket.WebSocket;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -109,8 +110,8 @@ public class Game {
         tasks = new Task[TASK_COUNT];
 
         for (int i = 0; i < TASK_COUNT; i++) {
-           tasks[i] = new Task();
-           tasks[i].id = Integer.toString(i);
+            tasks[i] = new Task();
+            tasks[i].id = Integer.toString(i + 1);
         }
     }
 
@@ -121,6 +122,14 @@ public class Game {
      */
     public boolean gameRunning() {
         return gameState != GameState.LOBBY;
+    }
+
+    /**
+     * Ends the current meeting and resets the game state.
+     */
+    public void endMeeting() {
+        gameState = GameState.INGAME;
+        currentMeeting = null;
     }
 
     /**
@@ -160,6 +169,7 @@ public class Game {
 
         Random rand = new Random();
         players.replaceAll(old_player -> {
+            WebSocket conn = wsServer.getConnectionByPlayer(old_player);
             Set<Task> task_set = new HashSet<>(TASKS_PER_PLAYER);
             int i = 0;
             while (i < TASKS_PER_PLAYER) {
@@ -167,6 +177,8 @@ public class Game {
                     i++;
                 }
             }
+
+            conn.send("[{\"type\":\"tasks\", \"data\": " + Arrays.toString(task_set.stream().map(task -> "\"" + task.id + "\"").toArray()) + "}]");
 
             int index = rand.nextInt(roles_available.size());
             Role role = roles_available.get(index);
@@ -181,7 +193,7 @@ public class Game {
                     throw new RuntimeException();
                 }
             };
-            wsServer.updateAttachment(old_player, new_player);
+            conn.setAttachment(new_player);
             return new_player;
         });
 
@@ -267,7 +279,6 @@ public class Game {
      * @param deathID The ID of the player or emergency to start the meeting for.
      */
     public void startMeeting(Player starter, String deathID) {
-        // Do not allow meeting to start if not ingame
         if (gameState != GameState.INGAME) {
             throw new IllegalStateException("Cannot start meeting, not ingame");
         }
@@ -283,7 +294,6 @@ public class Game {
             throw new IllegalStateException("Cannot start meeting, player doesn't exist");
         }
 
-        // start meeting depending on if it is report or emergency
         if (Objects.equals(deathID, "emergency")) {
             log.debug("Starting emergency meeting");
             currentMeeting = new Meeting(this, null);
@@ -303,21 +313,38 @@ public class Game {
      * @param taskID The ID of the task to complete.
      */
     public void completeTask(Player player, String taskID) {
-        // Do not allow task completions during meeting
         if (gameState != GameState.INGAME) {
             throw new IllegalStateException(new IllegalAccessException("Cannot complete task, not ingame"));
         }
-        // Only crewmates can do tasks
-        if (!(player instanceof Crewmate))
+        if (!(player instanceof Crewmate)) {
             return;
+        }
 
-        // Find task object relating to ID
         for (Task task : tasks) {
             if (task.id.equals(taskID)) {
-                // complete task
                 Crewmate crewmate = (Crewmate) player;
                 crewmate.completeTask(task);
                 log.debug("Task {} completed", taskID);
+            }
+        }
+    }
+
+    /**
+     * Marks a task as incomplete for a crewmate player.
+     * Pre-conditions: Player must be an instance of Crewmate.
+     * @param player The Crewmate player marking the task as incomplete.
+     * @param taskID The ID of the task to mark as incomplete.
+     */
+    public void incompleteTask(Player player, String taskID) {
+        if (!(player instanceof Crewmate)) {
+            return;
+        }
+
+        for (Task task : tasks) {
+            if (task.id.equals(taskID)) {
+                Crewmate crewmate = (Crewmate) player;
+                crewmate.incompleteTask(task);
+                log.debug("Task {} marked as incomplete", taskID);
             }
         }
     }
@@ -337,6 +364,7 @@ public class Game {
                     case "tasks.total" -> TASK_COUNT = i;
                     case "tasks.perPlayer" -> TASKS_PER_PLAYER = i;
                     case "maxPlayers" -> MAX_PLAYERS = i;
+                    case "meeting.duration" -> MEETING_DURATION = i;
                     default -> log.error("Cannot parse int value: {}", key);
                 }
             } else {
