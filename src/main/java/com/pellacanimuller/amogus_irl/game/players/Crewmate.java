@@ -4,14 +4,31 @@ import com.pellacanimuller.amogus_irl.game.Task;
 
 import java.util.Set;
 
+/**
+ * Represents a crewmate in the game.
+ */
 public class Crewmate extends Player {
-    public Set<Task> tasks; // TODO read task count; fill set
+    /**
+     * The tasks that the crewmate has completed.
+     */
+    public Set<Task> tasks;
 
+    /**
+     * Creates a new Crewmate with the given player and tasks.
+     *
+     * @param player The player to base the crewmate on.
+     * @param tasks The tasks that the crewmate has completed.
+     */
     public Crewmate(Player player, Set<Task> tasks) {
         super(player.id);
         this.tasks = tasks;
     }
 
+    /**
+     * Completes the given task if it is in the crewmate's task list.
+     *
+     * @param task The task to complete.
+     */
     public void completeTask(Task task) {
         for (Task elem : tasks) {
             if (elem == task) {
@@ -24,8 +41,22 @@ public class Crewmate extends Player {
         }
     }
 
+    /**
+     * Returns a copy of this crewmate.
+     *
+     * @return A copy of this crewmate.
+     */
     @Override
     public Player copy() {
         return super.copy();
+    }
+
+    /**
+     * Adds the given task to the crewmate's task list.
+     *
+     * @param task The task to add.
+     */
+    public void incompleteTask(Task task) {
+        tasks.add(task);
     }
 }

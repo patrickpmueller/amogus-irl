@@ -1,9 +1,6 @@
 package com.pellacanimuller.amogus_irl.net;
 
 import com.pellacanimuller.amogus_irl.game.Game;
-import com.pellacanimuller.amogus_irl.game.Task;
-import com.pellacanimuller.amogus_irl.game.players.Crewmate;
-import com.pellacanimuller.amogus_irl.game.players.Impostor;
 import com.pellacanimuller.amogus_irl.game.players.Player;
 import com.pellacanimuller.amogus_irl.util.TomlSettingsManager;
 import org.apache.logging.log4j.LogManager;
@@ -23,12 +20,28 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * GameWSServer
+ * WebSocket server for managing game connections and interactions.
+ * Handles game state, player connections, and game-related messages.
+ *
+ * @author @pellacanimuller
  */
 public class GameWSServer extends WebSocketServer {
+    /**
+     * The game instance associated with this WebSocket server.
+     */
     private Game game;
-    private final static Logger log = LogManager.getLogger( GameWSServer.class );
 
+    /**
+     * The logger for the GameWSServer class.
+     */
+    private final static Logger log = LogManager.getLogger(GameWSServer.class);
+
+    /**
+     * Constructs a new GameWSServer.
+     *
+     * @param addr the socket address to bind to.
+     * @param game the game instance to manage.
+     */
     public GameWSServer(InetSocketAddress addr, Game game) {
         super(addr);
         this.game = game;
@@ -36,6 +49,13 @@ public class GameWSServer extends WebSocketServer {
     }
 
     public void resetGame(Game game) {
+    /**
+     * Resets the game with the given game instance.
+     *
+     * @param game   the new game instance.
+     * @param isHard if true, resets connections; if false, retains existing players.
+     */
+    public void resetGame(Game game, boolean isHard) {
         this.game = game;
         this.getConnections()
                 .forEach(conn -> conn.setAttachment(
@@ -45,6 +65,12 @@ public class GameWSServer extends WebSocketServer {
         broadcastInfo();
     }
 
+    /**
+     * Handles a new player connection.
+     *
+     * @param conn      the WebSocket connection.
+     * @param handshake the client handshake.
+     */
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
         if (game.gameRunning()) {
@@ -61,6 +87,14 @@ public class GameWSServer extends WebSocketServer {
         }
     }
 
+    /**
+     * Handles a player disconnection.
+     *
+     * @param conn   the WebSocket connection.
+     * @param code   the close code.
+     * @param reason the reason for closing.
+     * @param remote true if closed by remote host.
+     */
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
         if (game.gameRunning()) {
@@ -72,6 +106,12 @@ public class GameWSServer extends WebSocketServer {
         }
     }
 
+    /**
+     * Handles errors on the WebSocket connection.
+     *
+     * @param conn the WebSocket connection.
+     * @param ex   the exception thrown.
+     */
     @Override
     public void onError(WebSocket conn, Exception ex) {
         log.error("Error on connection {}, Stack Trace: \n{}", conn.getRemoteSocketAddress(), ex.getStackTrace());
@@ -86,6 +126,12 @@ public class GameWSServer extends WebSocketServer {
         });
     }
 
+    /**
+     * Handles incoming messages from players.
+     *
+     * @param conn the WebSocket connection.
+     * @param msg  the message received.
+     */
     @Override
     public void onMessage(WebSocket conn, String msg) {
         log.debug("Message '{}' received", msg);
@@ -169,14 +215,19 @@ public class GameWSServer extends WebSocketServer {
         } else {
             tasks = ((Crewmate) socket.getAttachment()).tasks.toArray(new Task[0]);
         }
-        socket.send("[{\"type\": \"tasks\", \"data\": [" + Arrays.toString(tasks) + "]}]");
     }
 
+    /**
+     * Logs the start of the server.
+     */
     @Override
     public void onStart() {
         log.info("SERVER STARTED");
     }
 
+    /**
+     * Broadcasts the current game information to all connected players.
+     */
     private void broadcastInfo() {
         broadcast("[{\"type\": \"playerlist\",\"data\": [\"" + getConnections().stream().map(con -> ((Player) con.getAttachment()).id).collect(Collectors.joining("\",\"")) + "\"]}," +
                 "{\"type\": \"settings\", \"data\": " + TomlSettingsManager.readSettingsAsJson() + "}]");

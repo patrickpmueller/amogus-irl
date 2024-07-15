@@ -16,11 +16,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * A utility class for managing settings in Toml files.
+ *
+ * @author @pellacanimuller
+ */
 public class TomlSettingsManager {
-
     private static final String SETTINGS_FILE = "config/settings.toml";
     private final static Logger log = LogManager.getLogger(TomlSettingsManager.class);
 
+    /**
+     * Writes the given settings to the TOML file.
+     *
+     * @param settings The settings to write.
+     */
     public static void writeSettings(Map<String, Object> settings) {
         Toml existingToml = readSettings();
 
@@ -35,6 +44,13 @@ public class TomlSettingsManager {
         }
     }
 
+
+    /**
+     * Merges the given new settings into the existing settings object.
+     *
+     * @param existingSettings The existing settings. Will have all settings in it.
+     * @param newSettings The new settings to merge.
+     */
     @SuppressWarnings("unchecked")
     public static void mergeSettings(Map<String, Object> existingSettings, Map<String, Object> newSettings) {
         newSettings.forEach((key, value) -> {
@@ -46,6 +62,11 @@ public class TomlSettingsManager {
         });
     }
 
+    /**
+     * Reads the settings from the TOML file.
+     *
+     * @return The read settings.
+     */
     public static Toml readSettings() {
         File file = new File(SETTINGS_FILE);
         if (!file.exists()) {
@@ -54,10 +75,21 @@ public class TomlSettingsManager {
         return new Toml().read(file);
     }
 
+    /**
+     * Reads the settings as a JSON string.
+     *
+     * @return The settings as a JSON string.
+     */
     public static String readSettingsAsJson() {
         return mapToJson(readSettings().toMap()).toString();
     }
 
+
+    /**
+     * Reads the settings as a map.
+     *
+     * @return The settings as a map.
+     */
     public static Map<String, Object> readSettingsAsMap() {
         return flattenMap(readSettings().toMap(), ".").entrySet().stream()
                 .collect(Collectors.toMap(
@@ -66,12 +98,13 @@ public class TomlSettingsManager {
                 ));
     }
 
-
-    public static Map<String, Object> flattenMap(Map<String, Object> map) {
-        return flattenMap(map, null);
-    }
-
-
+    /**
+     * Flattens the given map.
+     *
+     * @param map The map to flatten.
+     * @param separator The separator to use between levels of nesting, when `null`, the top level is returned.
+     * @return The flattened map.
+     */
     public static Map<String, Object> flattenMap(Map<String, Object> map, String separator) {
         return map.entrySet().stream()
                 .flatMap(entry -> flatten(entry.getKey(), entry.getValue(), separator).entrySet().stream())
@@ -79,6 +112,13 @@ public class TomlSettingsManager {
     }
 
 
+    /**
+     * Updates the settings from the given JSON object.
+     *
+     * @param jsonSettings The JSON object containing the new settings.
+     * @param game The game to update the settings for.
+     * @throws IllegalArgumentException If the JSON object contains unsupported types.
+     */
     public static void changeSettingsFromJson(JsonObject jsonSettings, Game game) throws IllegalArgumentException {
         Map<String, Object> settings = new HashMap<>();
         Map<String, Object> roles = new HashMap<>();
@@ -94,7 +134,12 @@ public class TomlSettingsManager {
         TomlSettingsManager.writeSettings(settings);
     }
 
-
+    /**
+     * Converts the given JSON object to a map.
+     *
+     * @param jsonObject The JSON object to convert.
+     * @return The converted map.
+     */
     private static Map<String, Object> convertJsonObjectToMap(JsonObject jsonObject) {
         Map<String, Object> map = new HashMap<>();
         jsonObject.forEach((key, value) -> {
@@ -107,7 +152,12 @@ public class TomlSettingsManager {
         return map;
     }
 
-
+    /**
+     * Converts the given JSON value to an object.
+     *
+     * @param value The JSON value to convert.
+     * @return The converted object.
+     */
     private static Object convertValue(JsonValue value) {
         return switch (value.getValueType()) {
             case OBJECT -> convertJsonObjectToMap(value.asJsonObject());
@@ -121,7 +171,14 @@ public class TomlSettingsManager {
         };
     }
 
-
+    /**
+     * Flattens the given map with the given prefix and separator.
+     *
+     * @param prefix The prefix to use.
+     * @param value The value to flatten.
+     * @param separator The separator to use.
+     * @return The flattened map.
+     */
     private static Map<String, Object> flatten(String prefix, Object value, String separator) {
         Map<String, Object> result = new HashMap<>();
 
@@ -139,7 +196,13 @@ public class TomlSettingsManager {
         return result;
     }
 
-
+    /**
+     * Converts the given map to a JSON object.
+     *
+     * @param map The map to convert.
+     * @return The converted JSON object.
+     * @throws IllegalArgumentException If the map contains unsupported types.
+     */
     @SuppressWarnings("unchecked")
     private static JsonObject mapToJson(Map<String, Object> map) {
         JsonObjectBuilder builder = Json.createObjectBuilder();

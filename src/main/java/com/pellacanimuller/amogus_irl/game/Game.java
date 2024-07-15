@@ -26,23 +26,80 @@ enum Role {
     HEALER
 }
 
+/**
+ * Represents a game instance with settings and player management for the Amogus IRL game.
+ */
 public class Game {
     private final static Logger log = LogManager.getLogger(Game.class);
 
+    /**
+     * Maximum number of players allowed in the game.
+     */
     public int MAX_PLAYERS;
+
+    /**
+     * Number of tasks assigned to each player.
+     */
     public int TASKS_PER_PLAYER;
+
+    /**
+     * Number of impostors in the game.
+     */
     public int IMPOSTOR_COUNT;
+
+    /**
+     * Number of crewmates in the game.
+     */
     public int CREWMATE_COUNT;
+
+    /**
+     * Number of healers in the game.
+     */
     public int HEALER_COUNT;
+
+    /**
+     * Total number of tasks in the game.
+     */
     public int TASK_COUNT;
 
+    /**
+     * Duration of a meeting in the game.
+     */
+    public int MEETING_DURATION;
+
+    /**
+     * List of all players in the game.
+     */
     public List<Player> players;
+
+    /**
+     * List of players who are alive in the game.
+     */
     public List<Player> alive;
+
+    /**
+     * The current meeting happening in the game. Null if no meeting is ongoing.
+     */
     public Meeting currentMeeting = null;
+
+    /**
+     * The current state of the game.
+     */
     private GameState gameState = GameState.LOBBY;
+
+    /**
+     * Array of tasks in the game.
+     */
     public Task[] tasks;
+
+    /**
+     * WebSocket server for the game.
+     */
     private GameWSServer wsServer;
 
+    /**
+     * Constructs a new game instance, initializing settings and tasks.
+     */
     public Game() {
         updateSettings(TomlSettingsManager.readSettingsAsMap());
 
@@ -57,11 +114,20 @@ public class Game {
         }
     }
 
-
+    /**
+     * Returns true if the game is running, false otherwise.
+     *
+     * @return true if the game is running, false otherwise.
+     */
     public boolean gameRunning() {
         return gameState != GameState.LOBBY;
     }
 
+    /**
+     * Starts the game, assigning roles and tasks to players, and broadcasting game start to clients.
+     * Pre-conditions: Enough players, WebSocket server initialized, tasks available, and game not already running.
+     * Post-conditions: Game state set to INGAME, roles assigned to players, and game start broadcast.
+     */
     public void startGame() {
         if (IMPOSTOR_COUNT + CREWMATE_COUNT + HEALER_COUNT != players.size()) {
             log.info("Cannot start game, wrong player count");
@@ -97,8 +163,8 @@ public class Game {
             Set<Task> task_set = new HashSet<>(TASKS_PER_PLAYER);
             int i = 0;
             while (i < TASKS_PER_PLAYER) {
-               if (task_set.add(tasks[rand.nextInt(tasks.length)])) {
-                   i++;
+                if (task_set.add(tasks[rand.nextInt(tasks.length)])) {
+                    i++;
                 }
             }
 
@@ -109,7 +175,7 @@ public class Game {
             Player new_player = switch (role) {
                 case CREWMATE -> new Crewmate(old_player, task_set);
                 case HEALER -> new Healer(old_player, task_set);
-               case IMPOSTOR -> new Impostor(old_player, task_set);
+                case IMPOSTOR -> new Impostor(old_player, task_set);
                 case null -> {
                     log.error("Could not start game, no role in array");
                     throw new RuntimeException();
@@ -126,6 +192,10 @@ public class Game {
         gameState = GameState.INGAME;
     }
 
+    /**
+     * Acknowledges that the WebSocket server for the game has started.
+     * @param server The WebSocket server instance.
+     */
     public void acknowledgeServerStarted(GameWSServer server) {
         wsServer = server;
     }
@@ -133,7 +203,19 @@ public class Game {
     public Player addPlayer() throws IllegalStateException {
         return addExistingPlayer(new Player(""));
     }
+    /**
+     * Adds a player to the game by ID.
+     * @param playerID The ID of the player to add.
+     * @return The added Player instance.
+     * @throws IllegalStateException If player with the same ID already exists or lobby is full.
+     */
 
+    /**
+     * Adds an existing player instance to the game.
+     * @param existing The existing Player instance to add.
+     * @return The added Player instance.
+     * @throws IllegalStateException If lobby is full or existing player ID is empty.
+     */
     public Player addExistingPlayer(Player existing) {
         if (players.size() >= MAX_PLAYERS) {
             throw new IllegalStateException("Cannot add more players, lobby full already");
@@ -144,12 +226,21 @@ public class Game {
         return player;
     }
 
-    // Removes player from list
+    /**
+     * Removes a player from the game.
+     * @param player The Player instance to remove.
+     */
     public void removePlayer(Player player) {
         // Decrement count and remove player
         players.remove(player);
     }
 
+    /**
+     * Retrieves a player by their ID.
+     * @param playerID The ID of the player to retrieve.
+     * @return The Player instance corresponding to the ID.
+     * @throws IndexOutOfBoundsException If player with given ID is not found.
+     */
     public Player getPlayer(String playerID) throws IndexOutOfBoundsException {
         // Iterate through players
         for (Player player : players) {
@@ -162,6 +253,13 @@ public class Game {
         throw new IndexOutOfBoundsException("Player " + playerID + " not found");
     }
 
+    /**
+     * Starts a meeting in the game, either emergency or report meeting.
+     * Pre-conditions: Game state must be INGAME, starter must be alive, and player or emergency ID must exist.
+     * Post-conditions: Game state set to MEETING, current meeting initiated.
+     * @param starter The Player initiating the meeting.
+     * @param deathID The ID of the player or emergency to start the meeting for.
+     */
     public void startMeeting(Player starter, String deathID) {
         // Do not allow meeting to start if not ingame
         if (gameState != GameState.INGAME) {
@@ -192,6 +290,12 @@ public class Game {
         gameState = GameState.MEETING;
     }
 
+    /**
+     * Completes a task for a crewmate player.
+     * Pre-conditions: Game state must be INGAME, and player must be an instance of Crewmate.
+     * @param player The Crewmate player completing the task.
+     * @param taskID The ID of the task to complete.
+     */
     public void completeTask(Player player, String taskID) {
         // Do not allow task completions during meeting
         if (gameState != GameState.INGAME) {
@@ -212,6 +316,11 @@ public class Game {
         }
     }
 
+    /**
+     * Updates game settings based on provided map of settings.
+     * @param settings The map containing updated game settings.
+     * @throws IllegalStateException If unexpected value type encountered in settings map.
+     */
     public void updateSettings(Map<String, Object> settings) {
         TomlSettingsManager.flattenMap(settings, ".").forEach((key, value) -> {
             if (Objects.requireNonNull(value) instanceof Integer i) {
@@ -230,6 +339,10 @@ public class Game {
         });
     }
 
+    /**
+     * Generates and returns roles of players in JSON format.
+     * @return JSON representation of roles assigned to players.
+     */
     private String getRolesAsJson() {
         JsonArrayBuilder array = Json.createArrayBuilder();
 
