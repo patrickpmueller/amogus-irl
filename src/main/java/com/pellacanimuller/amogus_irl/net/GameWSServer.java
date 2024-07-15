@@ -15,7 +15,6 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import java.io.StringReader;
 import java.net.InetSocketAddress;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -48,7 +47,24 @@ public class GameWSServer extends WebSocketServer {
         game.acknowledgeServerStarted(this);
     }
 
-    public void resetGame(Game game) {
+    /**
+     * Starts the WebSocket server and sets the running state to true.
+     */
+    @Override
+    public void start() {
+        super.start();
+    }
+
+    /**
+     * Stops the WebSocket server and sets the running state to false.
+     *
+     * @throws InterruptedException if the stop operation is interrupted.
+     */
+    @Override
+    public void stop() throws InterruptedException {
+        super.stop();
+    }
+
     /**
      * Resets the game with the given game instance.
      *
@@ -57,10 +73,14 @@ public class GameWSServer extends WebSocketServer {
      */
     public void resetGame(Game game, boolean isHard) {
         this.game = game;
-        this.getConnections()
-                .forEach(conn -> conn.setAttachment(
-                        Objects.equals(((Player) conn.getAttachment()).id, "in_settings") || Objects.equals(((Player) conn.getAttachment()).id, "")
-                                ? null : game.addExistingPlayer(conn.getAttachment())));
+        game.acknowledgeServerStarted(this);
+        if (!isHard) {
+            this.getConnections().forEach(conn -> conn.setAttachment(
+                    Objects.equals(((Player) conn.getAttachment()).id, "")
+                            ? conn.getAttachment() : game.addExistingPlayer(conn.getAttachment())));
+        } else {
+            this.getConnections().forEach(conn -> conn.setAttachment(null));
+        }
         log.info("GAME RESET");
         broadcastInfo();
     }
@@ -73,18 +93,14 @@ public class GameWSServer extends WebSocketServer {
      */
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        if (game.gameRunning()) {
-            conn.setAttachment(new Player(""));
-            return;
-        }
         try {
-            Player player = game.addPlayer();
-            conn.setAttachment(player);
+            conn.setAttachment(null);
             log.info("Player connected");
         } catch (IllegalStateException e) {
-           log.info("Cannot add another player, lobby full");
-           conn.close();
+            log.info("Cannot add another player, lobby full");
+            conn.close();
         }
+        broadcastInfo();
     }
 
     /**
@@ -98,10 +114,14 @@ public class GameWSServer extends WebSocketServer {
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
         if (game.gameRunning()) {
-            log.info("Lost connection to {}", ((Player) conn.getAttachment()).id);
+            if (conn.getAttachment() == null) {
+                log.info("Lost connection to player, address {}", conn.getRemoteSocketAddress());
+            } else {
+                log.info("Lost connection to playerID {}, address {}", ((Player) conn.getAttachment()).id, conn.getRemoteSocketAddress());
+            }
         } else {
             game.removePlayer(conn.getAttachment());
-            log.info("Player disconnected");
+            log.info("Player at address: {} disconnected", conn.getRemoteSocketAddress());
             broadcastInfo();
         }
     }
@@ -116,14 +136,17 @@ public class GameWSServer extends WebSocketServer {
     public void onError(WebSocket conn, Exception ex) {
         log.error("Error on connection {}, Stack Trace: \n{}", conn.getRemoteSocketAddress(), ex.getStackTrace());
         // TODO error handling
+        conn.close();
     }
 
-    public void updateAttachment(Player old_player, Player new_player) {
-        getConnections().forEach(conn -> {
-            if (Objects.equals(conn.getAttachment(), old_player)) {
-                conn.setAttachment(new_player);
-            }
-        });
+    /**
+     * Retrieves the WebSocket connection associated with a given player.
+     *
+     * @param player the player.
+     * @return the WebSocket connection, or null if not found.
+     */
+    public WebSocket getConnectionByPlayer(Player player) {
+        return getConnections().stream().filter(conn -> Objects.equals(conn.getAttachment(), player)).findFirst().orElse(null);
     }
 
     /**

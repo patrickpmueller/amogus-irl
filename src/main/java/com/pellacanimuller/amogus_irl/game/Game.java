@@ -200,15 +200,22 @@ public class Game {
         wsServer = server;
     }
 
-    public Player addPlayer() throws IllegalStateException {
-        return addExistingPlayer(new Player(""));
-    }
     /**
      * Adds a player to the game by ID.
      * @param playerID The ID of the player to add.
      * @return The added Player instance.
      * @throws IllegalStateException If player with the same ID already exists or lobby is full.
      */
+    public Player addPlayer(String playerID) throws IllegalStateException {
+        if (playerID.isEmpty()) {
+            return null;
+        }
+        if (players.stream().anyMatch(player -> Objects.equals(player.id, playerID))) {
+            throw new IllegalStateException("Player with ID " + playerID + " already exists");
+        }
+
+        return addExistingPlayer(new Player(playerID));
+    }
 
     /**
      * Adds an existing player instance to the game.
@@ -219,6 +226,9 @@ public class Game {
     public Player addExistingPlayer(Player existing) {
         if (players.size() >= MAX_PLAYERS) {
             throw new IllegalStateException("Cannot add more players, lobby full already");
+        }
+        if (existing.id.isEmpty()) {
+            throw new IllegalStateException("Cannot add player with empty id");
         }
 
         Player player = existing.copy();
@@ -231,7 +241,6 @@ public class Game {
      * @param player The Player instance to remove.
      */
     public void removePlayer(Player player) {
-        // Decrement count and remove player
         players.remove(player);
     }
 
@@ -242,14 +251,11 @@ public class Game {
      * @throws IndexOutOfBoundsException If player with given ID is not found.
      */
     public Player getPlayer(String playerID) throws IndexOutOfBoundsException {
-        // Iterate through players
         for (Player player : players) {
-            // Right player is found
             if (player.id.equals(playerID)) {
                 return player;
             }
         }
-        // Player not found
         throw new IndexOutOfBoundsException("Player " + playerID + " not found");
     }
 

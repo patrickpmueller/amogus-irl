@@ -34,7 +34,8 @@ public class Main {
                     Thread.sleep(4000);
                     return;
                 }
-                case "reset" -> gameserver.resetGame(new Game());
+                case "reset-soft", "soft-reset" -> gameserver.resetGame(new Game(), false);
+                case "reset-hard", "hard-reset" -> gameserver.resetGame(new Game(), true);
             }
         }
     }
