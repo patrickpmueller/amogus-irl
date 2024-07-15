@@ -117,7 +117,7 @@ public class GameWSServer extends WebSocketServer {
                                     try {
                                         vote = game.getPlayer(target);
                                     } catch (Exception e) {
-                                        log.error(e);
+                                        log.error(e.getMessage());
                                         return;
                                     }
                                 }
@@ -173,7 +173,13 @@ public class GameWSServer extends WebSocketServer {
                                     game.healPlayer(game.getPlayer(target), (Healer) player);
                                 }
                             }
-                            case "startGame" -> game.startGame();
+                            case "startGame" -> {
+                                try {
+                                    game.startGame();
+                                } catch (IllegalStateException e) {
+                                    log.info(e.getMessage());
+                                }
+                            }
                             case "changeSettings" -> {
                                 try {
                                     TomlSettingsManager.changeSettingsFromJson(actionObj.getJsonObject("settings"), game);

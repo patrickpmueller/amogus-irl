@@ -155,24 +155,20 @@ public class Game {
      * Starts the game, assigning roles and tasks to players, and broadcasting game start to clients.
      * Pre-conditions: Enough players, WebSocket server initialized, tasks available, and game not already running.
      * Post-conditions: Game state set to INGAME, roles assigned to players, and game start broadcast.
+     * @throws IllegalStateException If pre-conditions are not met.
      */
-    public void startGame() {
+    public void startGame() throws IllegalStateException {
         if (IMPOSTOR_COUNT + CREWMATE_COUNT + HEALER_COUNT != players.size()) {
-            log.info("Cannot start game, wrong player count");
-            return;
+            throw new IllegalStateException("Cannot start game, wrong player count");
         }
         if (wsServer == null) {
-            log.info("Cannot start game, wsServer not initialized.");
-            return;
+            throw new IllegalStateException("Cannot start game, wsServer not initialized.");
         }
         if (TASKS_PER_PLAYER > tasks.length) {
-            log.info("Cannot start game, more tpp than available.");
-            return;
+            throw new IllegalStateException("Cannot start game, more tpp than available.");
         }
-
         if (gameState != GameState.LOBBY) {
-            log.info("Cannot start game, already running");
-            return;
+            throw new IllegalStateException("Cannot start game, already running");
         }
 
         List<Role> roles_available = new ArrayList<>();
@@ -282,8 +278,10 @@ public class Game {
      * @throws IndexOutOfBoundsException If player with given ID is not found.
      */
     public Player getPlayer(String playerID) throws IndexOutOfBoundsException {
+        log.debug("Getting player {}", playerID);
         for (Player player : players) {
-            if (player.id.equals(playerID)) {
+            log.debug("Checking player {}", player.id);
+            if (playerID.equals(player.id)) {
                 return player;
             }
         }
