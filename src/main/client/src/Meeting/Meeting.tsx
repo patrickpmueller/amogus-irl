@@ -36,6 +36,9 @@ export default function MeetingComponent() {
           Skip
         </div>
       </div>
+      <div>
+        
+      </div>
     </div>
   )
 }

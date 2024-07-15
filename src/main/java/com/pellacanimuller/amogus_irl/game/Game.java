@@ -127,9 +127,12 @@ public class Game {
     /**
      * Ends the current meeting and resets the game state.
      */
-    public void endMeeting() {
+    public void endMeeting(Player winner) {
         gameState = GameState.INGAME;
         currentMeeting = null;
+        this.alive.remove(winner);
+
+        wsServer.broadcast("[{\"type\": \"result\", \"data\": \"" + winner.id + "\"}}]");
     }
 
     /**

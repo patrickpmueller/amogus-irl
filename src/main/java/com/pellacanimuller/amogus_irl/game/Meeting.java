@@ -117,7 +117,7 @@ public class Meeting {
         log.debug("Meeting ended");
         timer.cancel();
         //noinspection OptionalGetWithoutIsPresent
-        game.alive.remove(votes.entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey());
-        game.endMeeting();
+        Player winner = votes.entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
+        game.endMeeting(winner);
     }
 }
