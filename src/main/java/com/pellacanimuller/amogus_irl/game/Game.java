@@ -148,7 +148,7 @@ public class Game {
         currentMeeting = null;
         this.alive.remove(winner);
 
-        wsServer.broadcast("[{\"type\": \"result\", \"data\": \"" + winner.id + "\"}}]");
+        wsServer.broadcast("[{\"type\": \"result\", \"data\": \"" + winner.id + "\"}]");
     }
 
     /**
