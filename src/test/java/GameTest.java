@@ -4,7 +4,9 @@ import com.pellacanimuller.amogus_irl.game.players.Crewmate;
 import com.pellacanimuller.amogus_irl.game.players.Impostor;
 import com.pellacanimuller.amogus_irl.game.players.Player;
 import com.pellacanimuller.amogus_irl.net.GameWSServer;
+import com.pellacanimuller.amogus_irl.util.TomlSettingsManager;
 import org.java_websocket.WebSocket;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -12,34 +14,50 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class GameTest {
 
+    @InjectMocks
     private Game game;
 
     @Mock
     private GameWSServer wsServer;
 
+    private static MockedStatic<TomlSettingsManager> settingsManager;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        game = new Game();
-        game.acknowledgeServerStarted(wsServer);
+        settingsManager = Mockito.mockStatic(TomlSettingsManager.class);
 
         Map<String, Object> settings = new HashMap<>();
+
         settings.put("roles.impostors", 1);
         settings.put("roles.crewmates", 1);
         settings.put("roles.healers", 1);
-        settings.put("tasks.total", 4);
+        settings.put("tasks.total", 3);
         settings.put("tasks.perPlayer", 2);
         settings.put("maxPlayers", 4);
-        settings.put("meetings.duration", 1000);
-        game.updateSettings(settings);
+        settings.put("meeting.duration", 1000);
+
+        settingsManager.when(TomlSettingsManager::readSettingsAsMap).thenReturn(settings);
+
+        settingsManager.when(() -> TomlSettingsManager.flattenMap(any(), any())).thenCallRealMethod();
+        settingsManager.when(() -> TomlSettingsManager.flatten(any(), any(), any())).thenCallRealMethod();
+
+        game = new Game();
+        game.acknowledgeServerStarted(wsServer);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        settingsManager.close();
+        game = null;
+        settingsManager = null;
     }
 
     private Set<Task> setupTasks() {
@@ -91,9 +109,6 @@ public class GameTest {
         settings.put("roles.impostors", 1);
         settings.put("roles.crewmates", 1);
         settings.put("roles.healers", 1);
-        settings.put("tasks.total", 2);
-        settings.put("tasks.perPlayer", 2);
-        settings.put("maxPlayers", 3);
         game.updateSettings(settings);
 
         Player player1 = new Player("player1");
@@ -127,12 +142,8 @@ public class GameTest {
 
         setupTasks();
         Map<String, Object> settings = new HashMap<>();
-        settings.put("roles.impostors", 1);
-        settings.put("roles.crewmates", 1);
-        settings.put("roles.healers", 1);
         settings.put("tasks.total", 2);
         settings.put("tasks.perPlayer", 2);
-        settings.put("maxPlayers", 3);
         game.updateSettings(settings);
 
         Player player1 = new Player("player1");
@@ -154,14 +165,6 @@ public class GameTest {
         when(wsServer.getConnectionByPlayer(any())).thenReturn(conn);
 
         setupTasks();
-        Map<String, Object> settings = new HashMap<>();
-        settings.put("roles.impostors", 1);
-        settings.put("roles.crewmates", 1);
-        settings.put("roles.healers", 1);
-        settings.put("tasks.total", 2);
-        settings.put("tasks.perPlayer", 2);
-        settings.put("maxPlayers", 3);
-        game.updateSettings(settings);
 
         Player player1 = new Player("player1");
         Player player2 = new Player("player2");
@@ -199,11 +202,22 @@ public class GameTest {
         Player player1 = new Player("player1");
         Player player2 = new Player("player2");
         Player player3 = new Player("player3");
+        game.alive = new ArrayList<>();
+        game.alive.add(player1);
+        game.alive.add(player2);
+        game.alive.add(player3);
+
         game.addExistingPlayer(player1);
         game.addExistingPlayer(player2);
         game.addExistingPlayer(player3);
         game.removePlayer(player1);
         assertEquals(2, game.players.size());
+        assertEquals(2, game.players.size());
+
+        game.removePlayer(null);
+        game.removePlayer(player2);
+        game.removePlayer(player3);
+        assertTrue(true);
     }
 
     @Test void testGetPlayer() {
@@ -310,5 +324,69 @@ public class GameTest {
         Impostor impostor = new Impostor(new Player("player2"), new HashSet<>(taskset));
         game.completeTask(impostor, "task1");
         assertEquals(impostor.mockTasks.size(), 2);
+    }
+
+    @Test
+    public void endGame_tooFewCrewmates() {
+        Crewmate crewmate = mock(Crewmate.class);
+        Impostor impostor = mock(Impostor.class);
+
+        game.alive = new ArrayList<>();
+        game.alive.add(crewmate);
+        game.alive.add(crewmate);
+        game.alive.add(impostor);
+        game.checkWinConditions();
+        verify(wsServer, never()).resetGame(any(Game.class), eq(true));
+
+        game.alive.remove(crewmate);
+        game.checkWinConditions();
+        verify(wsServer, times(1)).resetGame(any(Game.class), eq(true));
+        verify(wsServer, times(1)).broadcast("[{\"type\": \"endGame\", \"winners\": \"impostors\"}]");
+    }
+
+    @Test
+    public void endGame_tooFewImpostors() {
+        Crewmate crewmate = mock(Crewmate.class);
+        Impostor impostor = mock(Impostor.class);
+
+        game.alive = new ArrayList<>();
+        game.alive.add(crewmate);
+        game.alive.add(crewmate);
+        game.alive.add(impostor);
+        verify(wsServer, never()).resetGame(any(Game.class), eq(true));
+
+        game.alive.remove(impostor);
+        game.checkWinConditions();
+        verify(wsServer, times(1)).resetGame(any(Game.class), eq(true));
+        verify(wsServer, times(1)).broadcast("[{\"type\": \"endGame\", \"winners\": \"crewmates\"}]");
+    }
+    @Test
+    public void endGame_tasksDone() {
+        Crewmate crewmate = mock(Crewmate.class);
+        Impostor impostor = mock(Impostor.class);
+
+        game.alive = new ArrayList<>();
+        game.alive.add(crewmate);
+        game.alive.add(crewmate);
+        game.alive.add(impostor);
+
+        game.finishedTaskSet();
+        game.checkWinConditions();
+        verify(wsServer, never()).resetGame(any(Game.class), eq(true));
+
+        game.finishedTaskSet();
+        game.checkWinConditions();
+        verify(wsServer, times(1)).resetGame(any(Game.class), eq(true));
+        verify(wsServer, times(1)).broadcast("[{\"type\": \"endGame\", \"winners\": \"crewmates\"}]");
+    }
+
+    @Test
+    public void testUpdateSettings() {
+        Game myGame = new Game();
+        Map<String, Object> settings = TomlSettingsManager.readSettingsAsMap();
+        settings.put("meeting.duration", 1000);
+        myGame.updateSettings(settings);
+
+        assertEquals(1000, myGame.MEETING_DURATION);
     }
 }

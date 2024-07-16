@@ -179,7 +179,7 @@ public class TomlSettingsManager {
      * @param separator The separator to use.
      * @return The flattened map.
      */
-    private static Map<String, Object> flatten(String prefix, Object value, String separator) {
+    public static Map<String, Object> flatten(String prefix, Object value, String separator) {
         Map<String, Object> result = new HashMap<>();
 
         if (value instanceof Map) {

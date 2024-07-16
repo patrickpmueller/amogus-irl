@@ -43,6 +43,12 @@ public class GameWSServer extends WebSocketServer {
         super.stop();
     }
 
+    /**
+     * Resets the game.
+     *
+     * @param game the new game
+     * @param isHard if true, resets the player list
+     */
     public void resetGame(Game game, boolean isHard) {
         this.game = game;
         game.acknowledgeServerStarted(this);

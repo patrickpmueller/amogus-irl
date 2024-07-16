@@ -12,6 +12,22 @@ public class Task {
     public String id;
 
     /**
+     * Constructs a new Task with an empty identifier.
+     */
+    public Task() {
+        this.id = "";
+    }
+
+    /**
+     * Constructs a new Task with the given identifier.
+     *
+     * @param id The identifier for the task.
+     */
+    public Task(String id) {
+        this.id = id;
+    }
+
+    /**
      * Checks if two Task objects are equal.
      *
      * @param o The object to compare.

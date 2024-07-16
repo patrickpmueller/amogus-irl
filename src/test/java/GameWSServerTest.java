@@ -6,6 +6,7 @@ import com.pellacanimuller.amogus_irl.net.GameWSServer;
 import com.pellacanimuller.amogus_irl.util.TomlSettingsManager;
 import org.java_websocket.WebSocket;
 import org.java_websocket.server.WebSocketServer;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +40,8 @@ public class GameWSServerTest {
 
     private GameWSServer gameWSServer;
 
+    private static final MockedStatic<TomlSettingsManager> settingsManager = Mockito.mockStatic(TomlSettingsManager.class);
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -46,16 +49,20 @@ public class GameWSServerTest {
         // Initialize GameWSServer with gameMock
         gameWSServer = spy(new GameWSServer(new InetSocketAddress(8081), gameMock));
 
-        // Setup game settings
         Map<String, Object> settings = new HashMap<>();
         settings.put("roles.impostors", 1);
         settings.put("roles.crewmates", 1);
         settings.put("roles.healers", 1);
         settings.put("tasks.total", 4);
         settings.put("tasks.perPlayer", 2);
-        settings.put("maxPlayers", 5);
-        settings.put("meetings.duration", 1000);
-        gameMock.updateSettings(settings);
+        settings.put("maxPlayers", 4);
+        settings.put("meeting.duration", 1000);
+        settingsManager.when(TomlSettingsManager::readSettingsAsMap).thenReturn(settings);
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        settingsManager.close();
     }
 
     @Test
@@ -147,12 +154,10 @@ public class GameWSServerTest {
 
     @Test
     public void testOnMessage_changeSettings() {
-        try (MockedStatic<TomlSettingsManager> settingsManager = Mockito.mockStatic(TomlSettingsManager.class)) {
-            String changeSettings = "[{\"action\": \"changeSettings\", \"meetings.duration\": \"1000\"}]";
-            gameWSServer.onMessage(webSocketMock, changeSettings);
+        String changeSettings = "[{\"action\": \"changeSettings\", \"meeting.duration\": \"100\"}]";
+        gameWSServer.onMessage(webSocketMock, changeSettings);
 
-            settingsManager.verify(() -> TomlSettingsManager.changeSettingsFromJson(any(), any()), times(1));
-        }
+        settingsManager.verify(() -> TomlSettingsManager.changeSettingsFromJson(any(), any()), times(1));
     }
 
     @Test
@@ -181,23 +186,21 @@ public class GameWSServerTest {
         }
 
         // Mock TomlSettingsManager.readSettingsAsJson
-        try (MockedStatic<TomlSettingsManager> settingsManager = Mockito.mockStatic(TomlSettingsManager.class)) {
-            settingsManager.when(TomlSettingsManager::readSettingsAsJson).thenReturn("{\"setting1\":\"value1\"}");
+        settingsManager.when(TomlSettingsManager::readSettingsAsJson).thenReturn("{\"setting1\":\"value1\"}");
 
-            // Capture the broadcast message
-            ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-            doNothing().when(gameWSServer).broadcast(captor.capture());
+        // Capture the broadcast message
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        doNothing().when(gameWSServer).broadcast(captor.capture());
 
-            // Call the method under test
-            gameWSServer.broadcastInfo();
+        // Call the method under test
+        gameWSServer.broadcastInfo();
 
-            // Verify the broadcast method was called
-            verify(gameWSServer).broadcast(anyString());
+        // Verify the broadcast method was called
+        verify(gameWSServer).broadcast(anyString());
 
-            // Verify the captured message
-            String expectedMessage = "[{\"type\": \"playerlist\",\"data\": [\"player1\",\"player2\"]}," +
-                    "{\"type\": \"settings\", \"data\": {\"setting1\":\"value1\"}}]";
-            assertEquals(expectedMessage, captor.getValue());
-        }
+        // Verify the captured message
+        String expectedMessage = "[{\"type\": \"playerlist\",\"data\": [\"player1\",\"player2\"]}," +
+                "{\"type\": \"settings\", \"data\": {\"setting1\":\"value1\"}}]";
+        assertEquals(expectedMessage, captor.getValue());
     }
 }

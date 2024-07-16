@@ -14,7 +14,9 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import java.util.*;
-
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -103,11 +105,18 @@ public class Game {
      */
     private GameWSServer wsServer;
 
+
+    /**
+     * Number of tasksets crewmates have to complete to win the game.
+     */
+    private int tasksetsToWin;
+
     /**
      * Constructs a new game instance, initializing settings and tasks.
      */
     public Game() {
-        updateSettings(TomlSettingsManager.readSettingsAsMap());
+        Map<String, Object> settings = TomlSettingsManager.readSettingsAsMap();
+        updateSettings(settings);
 
         players = new ArrayList<>(MAX_PLAYERS);
 
@@ -118,6 +127,8 @@ public class Game {
             tasks[i] = new Task();
             tasks[i].id = Integer.toString(i + 1);
         }
+
+        tasksetsToWin = CREWMATE_COUNT + HEALER_COUNT;
     }
 
     /**
@@ -127,6 +138,33 @@ public class Game {
      */
     public boolean gameRunning() {
         return gameState != GameState.LOBBY;
+    }
+
+    public void checkWinConditions() {
+        if (tasksetsToWin == 0) {
+           endGame("crewmates");
+           return;
+        }
+
+        long crewmates = alive.stream().filter(p -> p instanceof Crewmate).count();
+
+        long impostors = alive.stream().filter(p -> p instanceof Impostor).count();
+
+        if (impostors >= crewmates) {
+           endGame("impostors");
+        }
+        if (impostors == 0) {
+            endGame("crewmates");
+        }
+    }
+
+    private void endGame(String winners) {
+        wsServer.broadcast("[{\"type\": \"endGame\", \"winners\": \"" + winners + "\"}]");
+        wsServer.resetGame(new Game(), true);
+    }
+
+    public void finishedTaskSet() {
+        tasksetsToWin--;
     }
 
     /**
@@ -217,6 +255,9 @@ public class Game {
         wsServer.broadcast("[{\"type\":\"startGame\", \"data\": " + getRolesAsJson() + "}]");
 
         gameState = GameState.INGAME;
+
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.scheduleAtFixedRate(this::checkWinConditions, 0, 2500, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -269,6 +310,7 @@ public class Game {
      */
     public void removePlayer(Player player) {
         players.remove(player);
+        alive.remove(player);
     }
 
     /**
@@ -338,7 +380,7 @@ public class Game {
         for (Task task : tasks) {
             if (task.id.equals(taskID)) {
                 Crewmate crewmate = (Crewmate) player;
-                crewmate.completeTask(task);
+                crewmate.completeTask(task, this::finishedTaskSet);
                 log.debug("Task {} completed", taskID);
             }
         }

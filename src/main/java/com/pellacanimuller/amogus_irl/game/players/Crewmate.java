@@ -2,6 +2,7 @@ package com.pellacanimuller.amogus_irl.game.players;
 
 import com.pellacanimuller.amogus_irl.game.Task;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -29,7 +30,7 @@ public class Crewmate extends Player {
      *
      * @param task The task to complete.
      */
-    public void completeTask(Task task) {
+    public void completeTask(Task task, Runnable onComplete) {
         for (Task elem : tasks) {
             if (elem == task) {
                 tasks.remove(task);
@@ -37,7 +38,7 @@ public class Crewmate extends Player {
             }
         }
         if (tasks.isEmpty()) {
-            // TODO Run callback for completed tasks
+            onComplete.run();
         }
     }
 
@@ -48,7 +49,7 @@ public class Crewmate extends Player {
      */
     @Override
     public Player copy() {
-        return super.copy();
+        return new Crewmate(super.copy(), new HashSet<>(this.tasks));
     }
 
     /**

@@ -2,6 +2,7 @@ package com.pellacanimuller.amogus_irl.game.players;
 
 import com.pellacanimuller.amogus_irl.game.Task;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -32,6 +33,6 @@ public class Impostor extends Player {
      */
     @Override
     public Player copy() {
-        return super.copy();
+        return new Impostor(super.copy(), new HashSet<>(this.mockTasks));
     }
 }
