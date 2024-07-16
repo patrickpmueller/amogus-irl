@@ -21,19 +21,30 @@ public class Main {
         // 3. Wait and react to game_start call
         // 4. Activate listeners, setup roles and tasks
         // 5. game loop
-        Game game = new Game();
-        InetSocketAddress address = new InetSocketAddress("localhost", 8080);
-        GameWSServer gameserver = new GameWSServer(address, game);
+        boolean noStartServer = false;
+        if (args.length == 1) {
+           if (args[0].equals("test")) {
+              noStartServer = true;
+           }
+        }
 
-        ScheduledExecutorService startGameExecutor = Executors.newScheduledThreadPool(1);
-        startGameExecutor.scheduleAtFixedRate(() -> {
+        Game game = new Game();InetSocketAddress address = new InetSocketAddress("localhost", 8080);
+        GameWSServer gameserver = new GameWSServer(address, game);
+        if (!noStartServer) {
+            ScheduledExecutorService startGameExecutor = Executors.newScheduledThreadPool(1);
+            startGameExecutor.scheduleAtFixedRate(() -> {
                 try {
                     gameserver.start();
                     startGameExecutor.shutdown();
                 } catch (Throwable e) {
                     log.info("Port already in use, retrying in 3 seconds...");
                 }
-        }, 0, 3, TimeUnit.SECONDS);
+            }, 0, 3, TimeUnit.SECONDS);
+        }
+
+        if (noStartServer) {
+            return;
+        }
 
         Scanner in = new Scanner(System.in);
         while (in.hasNextLine()) {
