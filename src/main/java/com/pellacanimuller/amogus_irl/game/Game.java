@@ -278,9 +278,7 @@ public class Game {
      * @throws IndexOutOfBoundsException If player with given ID is not found.
      */
     public Player getPlayer(String playerID) throws IndexOutOfBoundsException {
-        log.debug("Getting player {}", playerID);
         for (Player player : players) {
-            log.debug("Checking player {}", player.id);
             if (playerID.equals(player.id)) {
                 return player;
             }
