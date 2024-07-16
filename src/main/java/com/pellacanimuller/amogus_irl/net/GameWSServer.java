@@ -202,11 +202,11 @@ public class GameWSServer extends WebSocketServer {
         log.info("SERVER STARTED");
     }
 
-    private void broadcastInfo() {
+    public void broadcastInfo() {
         broadcast("[{\"type\": \"playerlist\",\"data\": [\"" + getConnections().stream()
                 .filter(conn -> conn.getAttachment() != null)
-                .distinct()
                 .map(con -> ((Player) con.getAttachment()).id)
+                .distinct()
                 .collect(Collectors.joining("\",\"")) + "\"]}," +
                 "{\"type\": \"settings\", \"data\": " + TomlSettingsManager.readSettingsAsJson() + "}]");
     }
