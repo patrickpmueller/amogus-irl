@@ -1,10 +1,15 @@
+import {useState} from "react";
 import {socket} from "../connection";
 import {deaths, playerlist} from "../gameEnv";
 import {PlayerID} from "../types";
 import './Meeting.css';
 
 export default function MeetingComponent() {
+  const [meetingProgress, setMeetingProgress] = useState(0);
+
   let voted = false;
+
+
 
   function vote(ev: React.MouseEvent<HTMLDivElement>) {
     if (voted) {
@@ -36,9 +41,9 @@ export default function MeetingComponent() {
           Skip
         </div>
       </div>
-      <div>
-        
-      </div>
+      <progress id="meetingProgress">
+        {meetingProgress}
+      </progress>
     </div>
   )
 }
