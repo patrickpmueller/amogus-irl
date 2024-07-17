@@ -237,17 +237,19 @@ public class Game {
             Role role = roles_available.get(index);
             roles_available.remove(index);
 
-            Player new_player = switch (role) {
-                case CREWMATE -> new Crewmate(old_player, task_set);
-                case HEALER -> new Healer(old_player, task_set);
-                case IMPOSTOR -> new Impostor(old_player, task_set);
+            Player newPlayer;
+
+            switch (role) {
+                case CREWMATE -> newPlayer = new Crewmate(old_player, task_set);
+                case HEALER -> newPlayer = new Healer(old_player, task_set);
+                case IMPOSTOR -> newPlayer = new Impostor(old_player, task_set);
                 case null -> {
                     log.error("Could not start game, no role in array");
                     throw new RuntimeException();
                 }
-            };
-            conn.setAttachment(new_player);
-            return new_player;
+            }
+            conn.setAttachment(newPlayer);
+            return newPlayer;
         });
 
         alive = new ArrayList<>(players);

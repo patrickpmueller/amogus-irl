@@ -28,7 +28,8 @@ public class Main {
            }
         }
 
-        Game game = new Game();InetSocketAddress address = new InetSocketAddress("localhost", 8080);
+        Game game = new Game();
+        InetSocketAddress address = new InetSocketAddress("localhost", 8080);
         GameWSServer gameserver = new GameWSServer(address, game);
         if (!noStartServer) {
             ScheduledExecutorService startGameExecutor = Executors.newScheduledThreadPool(1);
