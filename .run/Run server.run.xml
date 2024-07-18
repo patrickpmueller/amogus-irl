@@ -1,11 +1,10 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Run server" type="Application" factoryName="Application">
     <option name="ALTERNATIVE_JRE_PATH" value="/usr/lib/jvm/java-22-openjdk" />
-    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="MAIN_CLASS_NAME" value="com.pellacanimuller.amogus_irl.Main" />
     <module name="amogus-irl" />
     <method v="2">
-      <option name="Make" enabled="true" />
+      <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="compile verify" />
     </method>
   </configuration>
 </component>
