@@ -1,6 +1,6 @@
 import './Game.css';
 import {socket} from '../connection';
-import {playerID, playerlist, playerlistHooks, role, tasklist} from '../gameEnv';
+import {deaths, playerID, playerlist, playerlistHooks, role, tasklist} from '../gameEnv';
 import {useEffect, useState} from 'react';
 import {PlayerID} from '../types';
 
@@ -16,8 +16,16 @@ export default function GameComponent() {
       local = [<>{"Players: "}</>]
       setPlayerlistElem(local.concat(playerlist.filter(player => player !== "")
         .map((player, index) => player == playerID ?
-          <li key={index} id={player} className='player'><b>{player}</b></li> :
-          <li key={index} id={player} className="player">{player}</li>)));
+          <li key={index} 
+              id={player} 
+              className={"player" + (deaths.indexOf(player) === -1 ? "" : " death")}>
+            <b>{player}</b>
+          </li> :
+          <li key={index} 
+              id={player} 
+              className={"player" + (deaths.indexOf(player) === -1 ? "" : " death")}>
+            {player}
+          </li>)));
     }   
   }
   useEffect(updatePlayerlist, []);
@@ -36,6 +44,8 @@ export default function GameComponent() {
   function playerKilled() {
     if (window.confirm("Are you sure that you want to be marked as dead?")) {
       socket.sendDeath();
+      deaths.push(playerID);
+      setPlayerlistElem(playerlistElem);
     }
   }
 
