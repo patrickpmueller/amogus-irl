@@ -1,0 +1,80 @@
+@keyframes disappear {
+	from { 
+		transform: rotateX(0deg) 
+			rotateY(0deg) 
+			rotateZ(0deg)
+			scale(1, 1);	
+	}
+	50% {
+		transform: rotateX(18deg) 
+			rotateY(-17deg) 
+			rotateZ(191deg)
+			scale(0.455, 0.455);
+
+	}
+	to { 
+		transform: rotateX(36deg) 
+			rotateY(10deg) 
+			rotateZ(382deg)
+			scale(0.005, 0.005); 
+	}
+}
+
+@keyframes show {
+	from {
+		transform: scale(1.2, 1.2) rotateZ(0deg);
+	}
+	to {
+		transform: scale(1, 1) rotateZ(120deg);
+	}
+}
+
+@keyframes distance {
+	from {	
+		transform: scale(0.01, 0.01) rotateX(36deg) rotateY(10deg) rotateZ(382deg);
+	}
+	to {
+		transform: scale(0.001, 0.001) rotateX(36deg) rotateY(10deg) rotateZ(80deg);
+	}
+}
+
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: var(--nord7); }
+}
+
+#results-wrapper {
+	grid-template-rows: calc(100vh - 9em) 6em;
+	row-gap: 1rem;
+}
+
+#ejected {
+	animation-delay: 0s, 1.5s, 3.5s;
+	animation-name: show, disappear, end;
+	animation-duration: 1.5s, 2s, 2s;
+	animation-iteration-count: 1, 1, 1;
+	animation-timing-function: ease-in, linear, linear;
+	animation-fill-mode: forwards;
+	animation-composition: add;
+	max-width: calc(100vw - 2rem);
+	max-height: calc(100vh - 9rem);
+}
+
+.wrap {
+	font-size: 6rem;
+	margin: 0 auto;
+	position: relative;
+	max-width: 95vw;
+	display: flex;
+	animation:
+		blink-caret .75s step-end infinite;
+	overflow: hidden;
+	border-right: .1em solid var(--nord7);
+	letter-spacing: .1em;
+	white-space: nowrap;
+}
+
+#skipped-tag {
+	font-size: 12em;
+}
