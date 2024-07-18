@@ -105,7 +105,6 @@ public class Game {
      */
     private GameWSServer wsServer;
 
-
     /**
      * Number of tasksets crewmates have to complete to win the game.
      */
@@ -140,6 +139,9 @@ public class Game {
         return gameState != GameState.LOBBY;
     }
 
+    /**
+     * Checks if the game has ended and ends it if it has.
+     */
     public void checkWinConditions() {
         if (tasksetsToWin == 0) {
            endGame("crewmates");
@@ -158,13 +160,23 @@ public class Game {
         }
     }
 
+    /**
+     * Ends the game and broadcasts the result to all players.
+     *
+     * @param winners The winners of the game.
+     */
     private void endGame(String winners) {
+        log.info("Ending game, winners: {}", winners);
         wsServer.broadcast("[{\"type\": \"endGame\", \"winners\": \"" + winners + "\"}]");
         wsServer.resetGame(new Game(), true);
     }
 
+    /**
+     * Updates the number of tasksets that need to be completed to win the game.
+     */
     public void finishedTaskSet() {
         tasksetsToWin--;
+        log.info("Finished task set, tasksets to win: {}", tasksetsToWin);
     }
 
     /**
@@ -402,7 +414,7 @@ public class Game {
         for (Task task : tasks) {
             if (task.id.equals(taskID)) {
                 Crewmate crewmate = (Crewmate) player;
-                crewmate.incompleteTask(task);
+                crewmate.incompleteTask(task, () -> tasksetsToWin++);
                 log.debug("Task {} marked as incomplete", taskID);
             }
         }

@@ -57,7 +57,11 @@ public class Crewmate extends Player {
      *
      * @param task The task to add.
      */
-    public void incompleteTask(Task task) {
+    public void incompleteTask(Task task, Runnable onIncomplete) {
+        if (tasks.isEmpty()) {
+            onIncomplete.run();
+        }
         tasks.add(task);
+
     }
 }
