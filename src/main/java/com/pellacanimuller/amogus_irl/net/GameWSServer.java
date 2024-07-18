@@ -179,6 +179,14 @@ public class GameWSServer extends WebSocketServer {
                                     game.healPlayer(game.getPlayer(target), (Healer) player);
                                 }
                             }
+                            case "kill" -> {
+                                String target = actionObj.getString("playerID");
+                                try {
+                                    game.alive.remove(game.getPlayer(target));
+                                } catch (Exception e) {
+                                    log.info(e.getMessage());
+                                }
+                            }
                             case "startGame" -> {
                                 try {
                                     game.startGame();
