@@ -4,24 +4,18 @@ import com.pellacanimuller.amogus_irl.game.players.Healer;
 import com.pellacanimuller.amogus_irl.game.players.Impostor;
 import com.pellacanimuller.amogus_irl.game.players.Player;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 public class PlayerTest {
-    @Mock
-    private Runnable shouldBeCalled;
-
     @Test
-    public void testCrewmateTasks() {
-        MockitoAnnotations.openMocks(this);
-
+    public void testInitialTasksAndCompletion() {
         Player player = new Player("player1");
         Set<Task> tasks = new HashSet<>();
         Task task1 = new Task("task1");
@@ -35,7 +29,7 @@ public class PlayerTest {
         assertTrue(crewmate.tasks.contains(task2));
 
         Task task3 = new Task("task3");
-        crewmate.completeTask(task3, () -> fail("Task Set not empty but finished task set callback was called"));
+        crewmate.completeTask(task3, () -> fail("Task set not empty but finished task set callback was called"));
         assertEquals(2, crewmate.tasks.size());
         assertTrue(crewmate.tasks.contains(task1));
         assertTrue(crewmate.tasks.contains(task2));
@@ -44,13 +38,38 @@ public class PlayerTest {
         assertEquals(1, crewmate.tasks.size());
         assertTrue(crewmate.tasks.contains(task2));
 
+        Runnable shouldBeCalled = mock(Runnable.class);
         crewmate.completeTask(task2, shouldBeCalled);
         assertEquals(0, crewmate.tasks.size());
         verify(shouldBeCalled, times(1)).run();
+    }
 
-        crewmate.incompleteTask(task3);
+    @Test
+    public void testIncompleteTasksAndReinclusion() {
+        Player player = new Player("player1");
+        Set<Task> tasks = new HashSet<>();
+        Task task1 = new Task("task1");
+        Task task2 = new Task("task2");
+        tasks.add(task1);
+        tasks.add(task2);
+        Crewmate crewmate = new Crewmate(player, tasks);
+
+        Runnable shouldBeCalled = mock(Runnable.class);
+
+        // Complete initial tasks first
+        crewmate.completeTask(task1, () -> {});
+        crewmate.completeTask(task2, () -> {});
+
+        // Incomplete tasks
+        Task task3 = new Task("task3");
+        crewmate.incompleteTask(task3, shouldBeCalled);
         assertEquals(1, crewmate.tasks.size());
+        verify(shouldBeCalled, times(1)).run();
         assertTrue(crewmate.tasks.contains(task3));
+
+        crewmate.incompleteTask(task2, () -> fail("Task set not empty but un-finish task set callback was called"));
+        assertEquals(2, crewmate.tasks.size());
+        assertTrue(crewmate.tasks.contains(task2));
     }
 
     @Test
