@@ -330,6 +330,7 @@ public class GameTest {
     public void endGame_tooFewCrewmates() {
         Crewmate crewmate = mock(Crewmate.class);
         Impostor impostor = mock(Impostor.class);
+        game.gameState = Game.GameState.INGAME;
 
         game.alive = new ArrayList<>();
         game.alive.add(crewmate);
@@ -348,6 +349,7 @@ public class GameTest {
     public void endGame_tooFewImpostors() {
         Crewmate crewmate = mock(Crewmate.class);
         Impostor impostor = mock(Impostor.class);
+        game.gameState = Game.GameState.INGAME;
 
         game.alive = new ArrayList<>();
         game.alive.add(crewmate);
@@ -364,6 +366,7 @@ public class GameTest {
     public void endGame_tasksDone() {
         Crewmate crewmate = mock(Crewmate.class);
         Impostor impostor = mock(Impostor.class);
+        game.gameState = Game.GameState.INGAME;
 
         game.alive = new ArrayList<>();
         game.alive.add(crewmate);
