@@ -5,7 +5,7 @@ export interface Message {
 
 export type PlayerID = string;
 export type MessageType = "settings" | "playerlist" | "startGame" | "tasks" | "meeting" 
-  | "result" | "endGame";
+  | "result" | "endGame" | "healed";
 export type Role = "impostor" | "crewmate" | "healer" | "unset";
 export type TaskID = string;
 export type Action = "vote" | "setup" | "taskCompleted" | "taskUncompleted" | "meeting" 

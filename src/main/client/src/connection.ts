@@ -79,6 +79,11 @@ export default class GameWebSocket {
                 case "endGame":
                     to_gameEnd(msg.data as Role);
                     break;
+                case "healed":
+                    const index: number = deaths.indexOf(msg.data as PlayerID, 0);
+                    if (index > -1) {
+                        deaths.splice(index, 1);
+                    }
             }
         }
     }

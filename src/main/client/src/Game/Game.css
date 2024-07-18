@@ -5,14 +5,14 @@
   row-gap: 1rem;
 }
 
-.killed {
+.death {
   text-decoration: line-through var(--nord11);
   text-decoration-thickness: 0.3rem;
   font-size: 2rem;
 
 }
 
-.killed::marker {
+.death::marker {
   color: var(--nord11);
 }
 
