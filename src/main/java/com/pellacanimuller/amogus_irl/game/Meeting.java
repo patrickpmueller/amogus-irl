@@ -116,8 +116,16 @@ public class Meeting {
     private void endMeeting() {
         log.debug("Meeting ended");
         timer.cancel();
-        //noinspection OptionalGetWithoutIsPresent
-        Player winner = votes.entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
+        Player winner = votes.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .filter(maxEntry ->
+                        votes.values().stream()
+                                .filter(value -> value.equals(maxEntry.getValue()))
+                                .count() == 1
+                )
+                .map(Map.Entry::getKey)
+                .orElse(null);
+
         game.endMeeting(winner);
     }
 }
