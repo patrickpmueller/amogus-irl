@@ -1,7 +1,7 @@
 import { Message, Settings, Role, PlayerRole, TaskID, PlayerID, MessageOut } from './types.ts';
 import { changeSettings, settings } from './settings.ts';
 import { playerID, updatePlayerlist, setRole, updateTasklist, deaths } from './gameEnv.ts';
-import { to_meeting, to_results, to_role} from './main.tsx';
+import { to_gameEnd, to_meeting, to_results, to_role} from './main.tsx';
 
 export default class GameWebSocket {
     private reconnectInterval: number = 3000; // 3 seconds
@@ -74,6 +74,9 @@ export default class GameWebSocket {
                 case "result":
                     deaths.push(msg.data as PlayerID);
                     to_results(msg.data as PlayerID);
+                    break;
+                case "endGame":
+                    to_gameEnd(msg.data as Role);
                     break;
             }
         }

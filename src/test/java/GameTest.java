@@ -341,7 +341,7 @@ public class GameTest {
         game.alive.remove(crewmate);
         game.checkWinConditions();
         verify(wsServer, times(1)).resetGame(any(Game.class), eq(true));
-        verify(wsServer, times(1)).broadcast("[{\"type\": \"endGame\", \"winners\": \"impostors\"}]");
+        verify(wsServer, times(1)).broadcast("[{\"type\": \"endGame\", \"data\": \"impostors\"}]");
     }
 
     @Test
@@ -358,7 +358,7 @@ public class GameTest {
         game.alive.remove(impostor);
         game.checkWinConditions();
         verify(wsServer, times(1)).resetGame(any(Game.class), eq(true));
-        verify(wsServer, times(1)).broadcast("[{\"type\": \"endGame\", \"winners\": \"crewmates\"}]");
+        verify(wsServer, times(1)).broadcast("[{\"type\": \"endGame\", \"data\": \"crewmates\"}]");
     }
     @Test
     public void endGame_tasksDone() {
@@ -377,7 +377,7 @@ public class GameTest {
         game.finishedTaskSet();
         game.checkWinConditions();
         verify(wsServer, times(1)).resetGame(any(Game.class), eq(true));
-        verify(wsServer, times(1)).broadcast("[{\"type\": \"endGame\", \"winners\": \"crewmates\"}]");
+        verify(wsServer, times(1)).broadcast("[{\"type\": \"endGame\", \"data\": \"crewmates\"}]");
     }
 
     @Test

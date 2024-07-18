@@ -1,8 +1,11 @@
+import {to_home} from '../main';
 import {Role} from '../types';
 import './GameEnd.css';
 
 export default function GameEndComponent(props: GameEndComponentProps) {
   const winner = props.winner;
+
+  setTimeout(() => {to_home}, 7500);
 
   return (
     <img 

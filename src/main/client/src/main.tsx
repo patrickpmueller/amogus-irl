@@ -7,9 +7,10 @@ import LobbyComponent from './Lobby/Lobby';
 import RoleComponent from './Role/Role';
 import GameComponent from './Game/Game';
 import MeetingComponent from './Meeting/Meeting';
+import GameEndComponent from './GameEnd/GameEnd';
 import $ from 'jquery';
 import ResultsComponent from './Results/Results';
-import {PlayerID} from './types';
+import {PlayerID, Role} from './types';
 
 const reactRoot = ReactDOM.createRoot($("#root").get(0)!);
 
@@ -69,6 +70,14 @@ function to_results(winner: PlayerID) {
   );
 }
 
+function to_gameEnd(winners: Role) {
+  reactRoot.render(
+    <React.StrictMode>
+      <GameEndComponent winner={winners} />
+    </React.StrictMode>
+  );
+}
+
 to_home()
 
-export { to_lobby, to_settings, to_home, to_role, to_game, to_meeting, to_results };
+export { to_lobby, to_settings, to_home, to_role, to_game, to_meeting, to_results, to_gameEnd};

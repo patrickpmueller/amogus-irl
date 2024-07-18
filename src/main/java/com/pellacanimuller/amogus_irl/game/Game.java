@@ -25,6 +25,8 @@ import java.util.concurrent.TimeUnit;
 public class Game {
 
 
+    private ScheduledExecutorService checkWinConditionsScheduler;
+
     public enum GameState {
         LOBBY,
         INGAME,
@@ -144,6 +146,9 @@ public class Game {
      * Checks if the game has ended and ends it if it has.
      */
     public void checkWinConditions() {
+        if (gameState == GameState.LOBBY) {
+            return;
+        }
         if (tasksetsToWin == 0) {
            endGame("crewmates");
            return;
@@ -168,8 +173,16 @@ public class Game {
      */
     private void endGame(String winners) {
         log.info("Ending game, winners: {}", winners);
-        wsServer.broadcast("[{\"type\": \"endGame\", \"winners\": \"" + winners + "\"}]");
+        wsServer.broadcast("[{\"type\": \"endGame\", \"data\": \"" + winners + "\"}]");
         wsServer.resetGame(new Game(), true);
+    }
+
+    /**
+     * Destroys the game and resets the game state.
+     */
+    public void destroy() {
+        gameState = GameState.LOBBY;
+        checkWinConditionsScheduler.shutdown();
     }
 
     /**
@@ -276,8 +289,8 @@ public class Game {
         gameState = GameState.INGAME;
         log.info("Game started");
 
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        scheduler.scheduleAtFixedRate(this::checkWinConditions, 0, 2500, TimeUnit.MILLISECONDS);
+        checkWinConditionsScheduler = Executors.newScheduledThreadPool(1);
+        checkWinConditionsScheduler.scheduleAtFixedRate(this::checkWinConditions, 0, 2500, TimeUnit.MILLISECONDS);
     }
 
     /**
