@@ -6,14 +6,14 @@ import {PlayerID} from '../types';
 
 export default function GameComponent() {
   const [playerlistElem, setPlayerlistElem] = 
-    useState([<>{"Error while loading playerlist"}</>]);
+    useState([<div key="err">{"Error while loading playerlist"}</div>]);
 
   function updatePlayerlist() {
     let local: React.JSX.Element[];
     if (!socket.connected) {
-      local = [<>{"Not Connected"}</>];
+      local = [<div key="nc">{"Not Connected"}</div>];
     } else {
-      local = [<>{"Players: "}</>]
+      local = [<div key="-1">{"Players: "}</div>]
       setPlayerlistElem(local.concat(playerlist.filter(player => player !== "")
         .map((player, index) => player == playerID ?
           <li key={index} 

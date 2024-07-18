@@ -7,7 +7,7 @@ import {useEffect, useState} from 'react';
 
 export default function LobbyComponent() {
   const [playerlistElem, setPlayerlistElem] = 
-    useState([<>{"Error while loading playerlist"}</>]);
+    useState([<div key="err">{"Error while loading playerlist"}</div>]);
 
   function updatePlayerlist() {
     let local: React.JSX.Element[];
