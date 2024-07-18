@@ -42,6 +42,7 @@ export default class GameWebSocket {
         if (this.shouldReconnect) {
             setTimeout(() => this.connect(), this.reconnectInterval);
         }
+        updatePlayerlist([]);
     }
 
     private handleMessage(event: MessageEvent) {
