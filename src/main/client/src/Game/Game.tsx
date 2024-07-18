@@ -1,7 +1,8 @@
 import './Game.css';
 import {socket} from '../connection';
-import {playerID, playerlist, playerlistHooks, tasklist} from '../gameEnv';
+import {playerID, playerlist, playerlistHooks, role, tasklist} from '../gameEnv';
 import {useEffect, useState} from 'react';
+import {PlayerID} from '../types';
 
 export default function GameComponent() {
   const [playerlistElem, setPlayerlistElem] = 
@@ -38,6 +39,12 @@ export default function GameComponent() {
     }
   }
 
+  function roleSpecificFunction() {
+    if (role === "healer") {
+      socket.sendHeal(window.prompt("Who is being healed?") as PlayerID);
+    }
+  }
+
   function completeTask(ev: React.MouseEvent<HTMLLIElement, MouseEvent>) {
     if (ev.currentTarget.className.length <= 4) {
       ev.currentTarget.className += " complete";
@@ -57,6 +64,9 @@ export default function GameComponent() {
   }
   return (
     <div id="game-wrapper" className="wrapper">
+      <button id="role-specifics" className="button" onClick={roleSpecificFunction}>
+        Role Specific
+      </button>
       <ul className="list" id="tasklist">
         {tasklistElem}  
       </ul>

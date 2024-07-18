@@ -106,6 +106,10 @@ export default class GameWebSocket {
         this.send(this.asString({ action: "kill", playerID: playerID }));
     }
 
+    public sendHeal(target: PlayerID) {
+        this.send(this.asString({ action: "heal", playerID: target}));
+    }
+
     public sendTaskCompleted(taskID: TaskID) {
         this.send(this.asString({ action: "taskCompleted", taskID: taskID }));
     }
