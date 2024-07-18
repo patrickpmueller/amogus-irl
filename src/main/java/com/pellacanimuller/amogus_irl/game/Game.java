@@ -371,9 +371,9 @@ public class Game {
      * Pre-conditions: Game state must be INGAME, starter must be alive, and player or emergency ID must exist.
      * Post-conditions: Game state set to MEETING, current meeting initiated.
      * @param starter The Player initiating the meeting.
-     * @param deathID The ID of the player or emergency to start the meeting for.
+     * @param deathId The ID of the player or emergency to start the meeting for.
      */
-    public void startMeeting(Player starter, String deathID) {
+    public void startMeeting(Player starter, String deathId) {
         if (gameState != GameState.INGAME) {
             throw new IllegalStateException("Cannot start meeting, not ingame");
         }
@@ -381,23 +381,28 @@ public class Game {
         if (!alive.contains(starter)) {
             throw new IllegalStateException("Cannot start meeting, starter not alive");
         }
-        Optional<Player> deathOptional = players.stream()
-                .filter(player -> deathID.equals(player.id))
+
+        Optional<Player> optionalPlayer = players.stream()
+                .filter(player -> player.getId().equals(deathId))
                 .findFirst();
 
-        if (deathOptional.isEmpty() && !deathID.contains("emergency")) {
-            throw new IllegalStateException("Cannot start meeting, player doesn't exist");
+        if (optionalPlayer.isEmpty()) {
+            if (!deathId.equals("emergency")) {
+                throw new IllegalStateException("Player does not exist");
+            }
+        } else if (alive.contains(optionalPlayer.get())) {
+            throw new IllegalStateException("Player is still alive");
         }
 
-        if (Objects.equals(deathID, "emergency")) {
+        if (Objects.equals(deathId, "emergency")) {
             log.info("Starting emergency meeting");
             currentMeeting = new Meeting(this, null);
         } else {
-            log.info("Starting death report meeting, death of {}", deathID);
-            currentMeeting = new Meeting(this, getPlayer(deathID));
+            log.info("Starting death report meeting, death of {}", deathId);
+            currentMeeting = new Meeting(this, getPlayer(deathId));
         }
 
-        wsServer.broadcast("[{ \"type\": \"meeting\", \"data\": \"" + deathID +  "\" }]");
+        wsServer.broadcast("[{ \"type\": \"meeting\", \"data\": \"" + deathId +  "\" }]");
         gameState = GameState.MEETING;
     }
 
