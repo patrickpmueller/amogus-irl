@@ -94,8 +94,7 @@ public class GameWSServer extends WebSocketServer {
 
     @Override
     public void onError(WebSocket conn, Exception ex) {
-        log.error("Error on connection {}, Stack Trace: \n{}", conn.getRemoteSocketAddress(), ex.getStackTrace());
-        // TODO error handling
+        log.debug("Error on connection {}, Stack Trace: \n{}", conn.getRemoteSocketAddress(), ex.getStackTrace());
         conn.close();
     }
 
