@@ -1,8 +1,7 @@
 import { playerID, playerlist, playerlistHooks, setPlayerID } from '../gameEnv';
 import './Lobby.css';
-import {to_home} from '../main';
+import {to_game, to_home} from '../main';
 import { socket } from '../connection';
-import $ from 'jquery';
 import {useEffect, useState} from 'react';
 
 export default function LobbyComponent() {
@@ -30,7 +29,12 @@ export default function LobbyComponent() {
 
   return (
     <div id="lobby-wrapper" className="wrapper">
-      <button id="back" onClick={to_home}>Back to Home Screen</button>
+      <button id="back" className="secondaryButton" onClick={to_home}>
+        Back to Home Screen
+      </button>
+      <button id="rejoin" className="secondaryButton" onClick={to_game}>
+        Rejoin game
+      </button>
       <ul id="lobby-playerlist" className="list">
         {playerlistElem}  
       </ul>
@@ -38,8 +42,8 @@ export default function LobbyComponent() {
         <label htmlFor="name">Nickname: </label>
         <input id="name" />
         <button className="button" id="join" onClick={
-          () => {
-            setPlayerID($("#name").val()?.toString() as string);
+          (ev) => {
+            setPlayerID(ev.currentTarget.value);
             socket.sendSetup();
           }
         }>
