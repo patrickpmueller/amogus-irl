@@ -29,6 +29,7 @@ export interface Settings {
   maxPlayers: number;
   tasks: Tasks;
   roles: Roles;
+  meeting: Meeting;
 }
 
 export interface Tasks {
@@ -40,4 +41,8 @@ export interface Roles {
   crewmates: number;
   impostors: number;
   healers: number;
+}
+
+export interface Meeting {
+  duration: number;
 }
