@@ -182,7 +182,9 @@ public class Game {
      */
     public void destroy() {
         gameState = GameState.LOBBY;
-        checkWinConditionsScheduler.shutdown();
+        if (checkWinConditionsScheduler != null && !checkWinConditionsScheduler.isShutdown()) {
+           checkWinConditionsScheduler.shutdownNow();
+        }
     }
 
     /**
