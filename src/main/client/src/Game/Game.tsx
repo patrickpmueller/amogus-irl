@@ -45,7 +45,7 @@ export default function GameComponent() {
     if (window.confirm("Are you sure that you want to be marked as dead?")) {
       socket.sendDeath();
       deaths.push(playerID);
-      setPlayerlistElem(playerlistElem);
+      updatePlayerlist();
     }
   }
 
