@@ -1,11 +1,11 @@
 import { PlayerID, Role, TaskID } from "./types";
 
-var playerlist: PlayerID[] = [];
-var playerID: PlayerID = ""
-var playerlistHooks: ((newPlayerlist: PlayerID[]) => void)[] = []; 
-var role: Role = "unset";
-var tasklist: TaskID[] = [];
-var deaths: PlayerID[] = [];
+let playerlist: PlayerID[] = [];
+let playerID: PlayerID = ""
+const playerlistHooks: ((newPlayerlist: PlayerID[]) => void)[] = []; 
+let role: Role = "unset";
+let tasklist: TaskID[] = [];
+const deaths: PlayerID[] = [];
 
 function setRole(newRole: Role) {
   role = newRole;
@@ -14,6 +14,8 @@ function setRole(newRole: Role) {
 function setPlayerID(newPlayerID: PlayerID) {
   if (newPlayerID === "skip") {
     newPlayerID = "Skip";
+  } else if (newPlayerID === "emergency") {
+    newPlayerID = "Emergency";
   }
   playerID = newPlayerID;
 }
@@ -24,7 +26,7 @@ function updateTasklist(newTasklist: TaskID[]) {
 
 function updatePlayerlist(newPlayerlist: PlayerID[]) {
   playerlist = newPlayerlist;
-  for (let hook of playerlistHooks) {
+  for (const hook of playerlistHooks) {
     hook(newPlayerlist);
   }
 }

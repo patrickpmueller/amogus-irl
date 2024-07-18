@@ -12,9 +12,9 @@ export default function LobbyComponent() {
   function updatePlayerlist() {
     let local: React.JSX.Element[];
     if (!socket.connected) {
-      local = [<>{"Not Connected"}</>];
+      local = [<div key="nc">{"Not Connected"}</div>];
     } else {
-      local = [<>{"Players: "}</>]
+      local = [<div key="-1">{"Players: "}</div>]
       local = local.concat(playerlist.filter(player => player !== "")
         .map((player, index) => player == playerID ?
           <li key={index} id={player} className='player'><b>{player}</b></li> :
@@ -47,7 +47,7 @@ export default function LobbyComponent() {
         </button>
       </div>
       <button id="start" className="button" onClick={(event) => {
-        let button = event.currentTarget;
+        const button = event.currentTarget;
         if (gameStarting) {
           clearInterval(intervalId)
           gameStarting = false;

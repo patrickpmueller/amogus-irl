@@ -1,7 +1,7 @@
 import { Message, Settings, Role, PlayerRole, TaskID, PlayerID, MessageOut } from './types.ts';
 import { changeSettings, settings } from './settings.ts';
 import { playerID, updatePlayerlist, setRole, updateTasklist, deaths } from './gameEnv.ts';
-import {to_meeting, to_role} from './main.tsx';
+import { to_meeting, to_results, to_role} from './main.tsx';
 
 export default class GameWebSocket {
     private reconnectInterval: number = 3000; // 3 seconds
@@ -26,17 +26,17 @@ export default class GameWebSocket {
         this.websocket.onmessage = this.handleMessage.bind(this);
     }
 
-    private handleOpen(_: Event) {
+    private handleOpen() {
         console.log("Connection is open");
         this.sendSetup();
         this.connected = true;
     }
 
-    private handleError(_: Event) {
+    private handleError() {
         this.websocket?.close();
     }
 
-    private handleClose(_: CloseEvent) {
+    private handleClose() {
         console.log("Connection is closed");
         this.connected = false;
         if (this.shouldReconnect) {
@@ -45,22 +45,19 @@ export default class GameWebSocket {
     }
 
     private handleMessage(event: MessageEvent) {
-        let msgs: Message[] = JSON.parse(event.data);
+        const msgs: Message[] = JSON.parse(event.data);
         console.log(msgs);
 
-        for (let msg of msgs) {
+        for (const msg of msgs) {
             switch (msg.type) {
                 case "settings":
-                    let newSettings = msg.data as Settings;
-                    changeSettings(newSettings);
+                    changeSettings(msg.data as Settings);
                     break;
                 case "playerlist":
-                    let newPlayerlist = msg.data as string[];
-                    updatePlayerlist(newPlayerlist);
+                    updatePlayerlist(msg.data as string[]);
                     break;
                 case "startGame":
-                    let roles = msg.data as PlayerRole[];
-                    for (let newRole of roles) {
+                    for (const newRole of msg.data as PlayerRole[]) {
                         if (newRole.player == playerID) {
                             setRole(newRole.role as Role);
                         }
@@ -68,13 +65,15 @@ export default class GameWebSocket {
                     to_role();
                     break;
                 case "tasks":
-                    let newTasks = msg.data as TaskID[];
-                    updateTasklist(newTasks);
+                    updateTasklist(msg.data as TaskID[]);
                     break;
                 case "meeting":
-                    let death = msg.data as PlayerID;
-                    deaths.push(death);
+                    deaths.push(msg.data as PlayerID);
                     to_meeting();
+                    break;
+                case "result":
+                    deaths.push(msg.data as PlayerID);
+                    to_results(msg.data as PlayerID);
                     break;
             }
         }

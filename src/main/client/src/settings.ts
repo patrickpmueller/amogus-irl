@@ -1,6 +1,6 @@
 import { Settings } from './types.ts';
 
-var settings: Settings = { 
+let settings: Settings = { 
   maxPlayers: 0, 
   tasks: { 
     total: 0, 
@@ -10,6 +10,9 @@ var settings: Settings = {
     crewmates: 0,
     impostors: 0,
     healers: 0
+  },
+  meeting: {
+    duration: 0,
   }
 };
 

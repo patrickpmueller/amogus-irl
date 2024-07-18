@@ -8,6 +8,8 @@ import RoleComponent from './Role/Role';
 import GameComponent from './Game/Game';
 import MeetingComponent from './Meeting/Meeting';
 import $ from 'jquery';
+import ResultsComponent from './Results/Results';
+import {PlayerID} from './types';
 
 const reactRoot = ReactDOM.createRoot($("#root").get(0)!);
 
@@ -15,50 +17,58 @@ function to_lobby() {
   reactRoot.render(
     <React.StrictMode>
       <LobbyComponent />
-    </React.StrictMode>
+      </React.StrictMode>
   );
-};
+}
 
 function to_settings() {
   reactRoot.render(
     <React.StrictMode>
       <SettingsComponent />
-    </React.StrictMode>
+      </React.StrictMode>
   );
-};
+}
 
 function to_home() {
   reactRoot.render(
     <React.StrictMode>
       <HomeComponent />
-    </React.StrictMode>
+      </React.StrictMode>
   );
-};
+}
 
 function to_role() {
   reactRoot.render(
     <React.StrictMode>
       <RoleComponent />
-    </React.StrictMode>
+      </React.StrictMode>
   );
-};
+}
 
 function to_game() {
   reactRoot.render(
     <React.StrictMode>
       <GameComponent />
-    </React.StrictMode>
+      </React.StrictMode>
   );
-};
+}
 
 function to_meeting() {
   reactRoot.render(
     <React.StrictMode>
       <MeetingComponent />
-    </React.StrictMode>
+      </React.StrictMode>
   );
-};
+}
+
+function to_results(winner: PlayerID) {
+  reactRoot.render(
+    <React.StrictMode>
+      <ResultsComponent winner={winner} />
+      </React.StrictMode>
+  );
+}
 
 to_home()
 
-export { to_lobby, to_settings, to_home, to_role, to_game, to_meeting };
+export { to_lobby, to_settings, to_home, to_role, to_game, to_meeting, to_results };

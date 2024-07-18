@@ -16,7 +16,7 @@ export default function RoleComponent() {
       $("#role").attr("alt", "Error! couldn't load SVG!\nRole: " + role);
       document.title = "Role: " + role.charAt(0).toUpperCase() + role.slice(1);
       let time = false;
-      let forward = setInterval(() => {
+      const forward = setInterval(() => {
         if (time) {
           clearInterval(forward);
           to_game();
