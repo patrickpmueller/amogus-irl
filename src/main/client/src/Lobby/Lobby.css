@@ -5,12 +5,14 @@
   grid-template-columns: 3fr 2fr;
 }
 
-
 #back {
   grid-column-start: 1;
   grid-column-end: 2;
   grid-row-start: 1;
   grid-row-end: 2;
+}
+
+.secondaryButton {
   font-size: 3rem;
 }
 
