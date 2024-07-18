@@ -204,6 +204,7 @@ public class Game {
         if (healer != null && alive.contains(healer)) {
             log.debug("Healing player {} by {}", player.id, healer.id);
             alive.add(player);
+            wsServer.broadcast("[{\"type\": \"healed\", \"data\": \"" + player.id + "\"}]");
         }
     }
 
