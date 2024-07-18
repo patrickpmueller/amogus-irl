@@ -1,10 +1,10 @@
 ## Backend:
 ### Win conditions: 
- - tasks
- - kills
+ - DONE: tasks
+ - DONE: kills
 
 ### Roles:
- - Healer specific healing
+ - DONE: Healer specific healing
  
 ### Meeting:
  - DONE: broadcast result
@@ -12,5 +12,5 @@
 ## Frontend:
  - Win screens
  - role specific (healing)
- - show meeting timer + result
- - fix bug where wrong player is dead
+ - DONE: show meeting timer + result
+ - DONE: fix bug where wrong player is dead
