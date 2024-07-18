@@ -472,7 +472,7 @@ public class Game {
      * Generates and returns roles of players in JSON format.
      * @return JSON representation of roles assigned to players.
      */
-    private String getRolesAsJson() {
+    public String getRolesAsJson() {
         JsonArrayBuilder array = Json.createArrayBuilder();
 
         players.forEach((player) -> {

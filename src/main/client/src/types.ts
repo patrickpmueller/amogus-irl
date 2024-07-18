@@ -9,7 +9,7 @@ export type MessageType = "settings" | "playerlist" | "startGame" | "tasks" | "m
 export type Role = "impostor" | "crewmate" | "healer" | "unset";
 export type TaskID = string;
 export type Action = "vote" | "setup" | "taskCompleted" | "taskUncompleted" | "meeting" 
-    | "kill" | "startGame" | "changeSettings" | "heal";
+    | "kill" | "startGame" | "changeSettings" | "heal" | "reconnect";
 
 export interface MessageOut {
   action: Action;

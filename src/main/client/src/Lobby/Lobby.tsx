@@ -2,6 +2,7 @@ import { playerID, playerlist, playerlistHooks, setPlayerID } from '../gameEnv';
 import './Lobby.css';
 import {to_game, to_home} from '../main';
 import { socket } from '../connection';
+import $ from 'jquery';
 import {useEffect, useState} from 'react';
 
 export default function LobbyComponent() {
@@ -42,8 +43,8 @@ export default function LobbyComponent() {
         <label htmlFor="name">Nickname: </label>
         <input id="name" />
         <button className="button" id="join" onClick={
-          (ev) => {
-            setPlayerID(ev.currentTarget.value);
+          () => {
+            setPlayerID($("#name").val()?.toString() as string);
             socket.sendSetup();
           }
         }>

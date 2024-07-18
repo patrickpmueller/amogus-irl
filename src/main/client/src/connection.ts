@@ -87,6 +87,10 @@ export default class GameWebSocket {
         this.send(this.asString({ action: "setup", playerID: playerID }));
     }
 
+    public sendReconnect() {
+        this.send(this.asString({action: "reconnect"}));
+    }
+
     public sendStartGame() {
         this.send(this.asString({ action: "startGame" }));
     }

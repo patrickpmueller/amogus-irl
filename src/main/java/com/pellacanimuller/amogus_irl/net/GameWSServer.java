@@ -1,7 +1,9 @@
 package com.pellacanimuller.amogus_irl.net;
 
 import com.pellacanimuller.amogus_irl.game.Game;
+import com.pellacanimuller.amogus_irl.game.players.Crewmate;
 import com.pellacanimuller.amogus_irl.game.players.Healer;
+import com.pellacanimuller.amogus_irl.game.players.Impostor;
 import com.pellacanimuller.amogus_irl.game.players.Player;
 import com.pellacanimuller.amogus_irl.util.TomlSettingsManager;
 import org.apache.logging.log4j.LogManager;
@@ -16,6 +18,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import java.io.StringReader;
 import java.net.InetSocketAddress;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -201,6 +204,17 @@ public class GameWSServer extends WebSocketServer {
                                     log.error(e.getStackTrace());
                                 }
                                 broadcastInfo();
+                            }
+                            case "reconnect" -> {
+                                String tasks = "[]";
+                                if (player instanceof Crewmate crewmate) {
+                                    tasks = Arrays.toString(crewmate.tasks.stream().map(task -> "\"" + task.id + "\"").toArray());
+                                } else if (player instanceof Impostor impostor) {
+                                    tasks = Arrays.toString(impostor.mockTasks.stream().map(task -> "\"" + task.id + "\"").toArray());
+                                }
+
+                                conn.send("[{\"type\":\"tasks\", \"data\": " + tasks + "}, " +
+                                        "{\"type\":\"startGame\", \"data\": " + game.getRolesAsJson() + "}]");
                             }
                             default -> log.info("Action '{}' not recognised.", action);
                         }
