@@ -114,12 +114,12 @@ public class Game {
      * Constructs a new game instance, initializing settings and tasks.
      */
     public Game() {
+        log.debug("Constructing new game");
         Map<String, Object> settings = TomlSettingsManager.readSettingsAsMap();
         updateSettings(settings);
 
         players = new ArrayList<>(MAX_PLAYERS);
 
-        // Create Tasks array
         tasks = new Task[TASK_COUNT];
 
         for (int i = 0; i < TASK_COUNT; i++) {
@@ -128,6 +128,7 @@ public class Game {
         }
 
         tasksetsToWin = CREWMATE_COUNT + HEALER_COUNT;
+        log.debug("Constructed game with {} settings", settings);
     }
 
     /**
@@ -186,6 +187,7 @@ public class Game {
      */
     public void healPlayer(Player player, Healer healer) {
         if (healer != null && alive.contains(healer)) {
+            log.debug("Healing player {} by {}", player.id, healer.id);
             alive.add(player);
         }
     }
@@ -197,8 +199,11 @@ public class Game {
         gameState = GameState.INGAME;
         currentMeeting = null;
         this.alive.remove(winner);
-
-        wsServer.broadcast("[{\"type\": \"result\", \"data\": \"" + winner.id + "\"}]");
+        if (winner == null) {
+            wsServer.broadcast("[{\"type\": \"result\", \"data\": \"skip\"}]");
+        } else {
+            wsServer.broadcast("[{\"type\": \"result\", \"data\": \"" + winner.id + "\"}]");
+        }
     }
 
     /**
@@ -221,40 +226,40 @@ public class Game {
             throw new IllegalStateException("Cannot start game, already running");
         }
 
-        List<Role> roles_available = new ArrayList<>();
+        List<Role> rolesAvailable = new ArrayList<>();
         for (int i = 0; i < IMPOSTOR_COUNT; i++) {
-            roles_available.add(Role.IMPOSTOR);
+            rolesAvailable.add(Role.IMPOSTOR);
         }
         for (int i = 0; i < CREWMATE_COUNT; i++) {
-            roles_available.add(Role.CREWMATE);
+            rolesAvailable.add(Role.CREWMATE);
         }
         for (int i = 0; i < HEALER_COUNT; i++) {
-            roles_available.add(Role.HEALER);
+            rolesAvailable.add(Role.HEALER);
         }
 
         Random rand = new Random();
-        players.replaceAll(old_player -> {
-            WebSocket conn = wsServer.getConnectionByPlayer(old_player);
-            Set<Task> task_set = new HashSet<>(TASKS_PER_PLAYER);
+        players.replaceAll(oldPlayer -> {
+            WebSocket conn = wsServer.getConnectionByPlayer(oldPlayer);
+            Set<Task> taskSet = new HashSet<>(TASKS_PER_PLAYER);
             int i = 0;
             while (i < TASKS_PER_PLAYER) {
-                if (task_set.add(tasks[rand.nextInt(tasks.length)])) {
+                if (taskSet.add(tasks[rand.nextInt(tasks.length)])) {
                     i++;
                 }
             }
 
-            conn.send("[{\"type\":\"tasks\", \"data\": " + Arrays.toString(task_set.stream().map(task -> "\"" + task.id + "\"").toArray()) + "}]");
+            conn.send("[{\"type\":\"tasks\", \"data\": " + Arrays.toString(taskSet.stream().map(task -> "\"" + task.id + "\"").toArray()) + "}]");
 
-            int index = rand.nextInt(roles_available.size());
-            Role role = roles_available.get(index);
-            roles_available.remove(index);
+            int index = rand.nextInt(rolesAvailable.size());
+            Role role = rolesAvailable.get(index);
+            rolesAvailable.remove(index);
 
             Player newPlayer;
 
             switch (role) {
-                case CREWMATE -> newPlayer = new Crewmate(old_player, task_set);
-                case HEALER -> newPlayer = new Healer(old_player, task_set);
-                case IMPOSTOR -> newPlayer = new Impostor(old_player, task_set);
+                case CREWMATE -> newPlayer = new Crewmate(oldPlayer, taskSet);
+                case HEALER -> newPlayer = new Healer(oldPlayer, taskSet);
+                case IMPOSTOR -> newPlayer = new Impostor(oldPlayer, taskSet);
                 case null -> {
                     log.error("Could not start game, no role in array");
                     throw new RuntimeException();
@@ -269,6 +274,7 @@ public class Game {
         wsServer.broadcast("[{\"type\":\"startGame\", \"data\": " + getRolesAsJson() + "}]");
 
         gameState = GameState.INGAME;
+        log.info("Game started");
 
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         scheduler.scheduleAtFixedRate(this::checkWinConditions, 0, 2500, TimeUnit.MILLISECONDS);
@@ -315,6 +321,7 @@ public class Game {
 
         Player player = existing.copy();
         players.add(player);
+        log.info("Added player {}", player.id);
         return player;
     }
 
@@ -325,6 +332,7 @@ public class Game {
     public void removePlayer(Player player) {
         players.remove(player);
         alive.remove(player);
+        log.info("Removed player {}", Objects.requireNonNullElse(player, new Player("null")).id);
     }
 
     /**
@@ -334,6 +342,7 @@ public class Game {
      * @throws IndexOutOfBoundsException If player with given ID is not found.
      */
     public Player getPlayer(String playerID) throws IndexOutOfBoundsException {
+        log.debug("Attempt to get player {}", playerID);
         for (Player player : players) {
             if (playerID.equals(player.id)) {
                 return player;
@@ -366,10 +375,10 @@ public class Game {
         }
 
         if (Objects.equals(deathID, "emergency")) {
-            log.debug("Starting emergency meeting");
+            log.info("Starting emergency meeting");
             currentMeeting = new Meeting(this, null);
         } else {
-            log.debug("Starting death report meeting, death of {}", deathID);
+            log.info("Starting death report meeting, death of {}", deathID);
             currentMeeting = new Meeting(this, getPlayer(deathID));
         }
 
@@ -454,9 +463,9 @@ public class Game {
         players.forEach((player) -> {
             JsonObjectBuilder obj = Json.createObjectBuilder();
             switch (player) {
-                case Healer _ -> obj.add("player", player.id).add("role", "healer");
-                case Crewmate _ -> obj.add("player", player.id).add("role", "crewmate");
-                case Impostor _ -> obj.add("player", player.id).add("role", "impostor");
+                case Healer ignored -> obj.add("player", player.id).add("role", "healer");
+                case Crewmate ignored -> obj.add("player", player.id).add("role", "crewmate");
+                case Impostor ignored -> obj.add("player", player.id).add("role", "impostor");
                 default -> throw new IllegalStateException("Unexpected value: " + player);
             }
             array.add(obj.build());

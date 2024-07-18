@@ -112,7 +112,7 @@ public class GameWSServer extends WebSocketServer {
                     arg -> {
                         JsonObject actionObj = arg.asJsonObject();
                         String action = actionObj.getString("action");
-                        log.info("Action '{}' parsed. Trying to fulfil action.", action);
+                        log.debug("Action '{}' parsed. Trying to fulfil action.", action);
                         switch (action) {
                             case "vote" -> {
                                 String target = actionObj.getString("target").strip();
