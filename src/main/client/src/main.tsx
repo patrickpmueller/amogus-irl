@@ -71,9 +71,7 @@ function to_game() {
 
 function to_meeting() {
   reactRoot.render(
-    <React.StrictMode>
-      <MeetingComponent />
-      </React.StrictMode>
+    <MeetingComponent />
   );
 }
 

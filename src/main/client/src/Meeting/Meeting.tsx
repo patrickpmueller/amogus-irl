@@ -6,16 +6,23 @@ import './Meeting.css';
 import {settings} from "../settings";
 
 export default function MeetingComponent() {
-  const [meetingProgress, setMeetingProgress] = useState(settings.meeting.duration);
+  const [meetingProgress, setMeetingProgress] = useState(settings.meeting.duration * 1000);
 
   let voted = false;
 
   useEffect(() => {
+    let lastRun = Date.now();
     if (meetingProgress > 0) {
-      console.log(meetingProgress);
-      setTimeout(() => {setMeetingProgress(meetingProgress - .066)}, 66);
+      setTimeout(() => {lastRun = decrementMeetingCount(lastRun)}, 60);
     } 
   }, [meetingProgress]);
+
+  function decrementMeetingCount(lastRun: number): number {
+    const now = Date.now();
+    setMeetingProgress(meetingProgress - (now - lastRun));
+      console.log(`Now - Last Run: ${now - lastRun}, Meeting Progress: ${meetingProgress}`);
+    return now;
+  }
 
   function vote(ev: React.MouseEvent<HTMLDivElement>) {
     if (voted) {
@@ -55,7 +62,7 @@ export default function MeetingComponent() {
         </div>
         <progress 
         id="meetingProgress" 
-        max={settings.meeting.duration} 
+        max={settings.meeting.duration * 1000} 
         value={meetingProgress}>
         </progress>
       </div>
