@@ -33,7 +33,10 @@ export default function LobbyComponent() {
       <button id="back" className="secondaryButton" onClick={to_home}>
         Back to Home Screen
       </button>
-      <button id="rejoin" className="secondaryButton" onClick={to_game}>
+      <button id="rejoin" className="secondaryButton" onClick={() => {
+          socket.sendReconnect();
+          to_game();
+        }}>
         Rejoin game
       </button>
       <ul id="lobby-playerlist" className="list">
