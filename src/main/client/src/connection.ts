@@ -1,7 +1,7 @@
 import { Message, Settings, Role, PlayerRole, TaskID, PlayerID, MessageOut } from './types.ts';
 import { changeSettings, settings } from './settings.ts';
-import { playerID, updatePlayerlist, setRole, updateTasklist, deaths } from './gameEnv.ts';
-import { to_gameEnd, to_meeting, to_results, to_role} from './main.tsx';
+import { playerID, updatePlayerlist, setRole, updateTasklist, deaths, playerlist } from './gameEnv.ts';
+import { finishGame, to_gameEnd, to_meeting, to_results, to_role} from './main.tsx';
 
 export default class GameWebSocket {
     private reconnectInterval: number = 3000; // 3 seconds
@@ -77,7 +77,7 @@ export default class GameWebSocket {
                     to_results(msg.data as PlayerID);
                     break;
                 case "endGame":
-                    to_gameEnd(msg.data as Role);
+                    finishGame(msg.data as Role);
                     break;
                 case "healed":
                     const index: number = deaths.indexOf(msg.data as PlayerID, 0);

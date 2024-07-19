@@ -11,8 +11,23 @@ import GameEndComponent from './GameEnd/GameEnd';
 import $ from 'jquery';
 import ResultsComponent from './Results/Results';
 import {PlayerID, Role} from './types';
+import {deaths, setPlayerID, setRole} from './gameEnv';
 
 const reactRoot = ReactDOM.createRoot($("#root").get(0)!);
+
+let gameFinishedInterval: number;
+let gameFinished = false;
+let winners: Role;
+export function finishGame(w: Role) {
+  winners = w;
+  gameFinished = true;
+  deaths.forEach((_: PlayerID, i: number) => {
+    delete deaths[i];
+  });
+  setPlayerID("");
+  setRole("unset");
+  gameFinishedInterval = setInterval(() => to_gameEnd(winners), 1500);
+}
 
 function to_lobby() {
   reactRoot.render(
@@ -68,14 +83,25 @@ function to_results(winner: PlayerID) {
       <ResultsComponent winner={winner} />
       </React.StrictMode>
   );
+
+  setTimeout(() => {
+    if (gameFinished) {
+      clearInterval(gameFinishedInterval);
+      to_gameEnd(winners);
+    } else {
+      to_game();
+    }
+  }, winner === "skip" ? 8000 : (winner.length + 10) * 150 + 1000);
 }
 
 function to_gameEnd(winners: Role) {
   reactRoot.render(
     <React.StrictMode>
       <GameEndComponent winner={winners} />
-    </React.StrictMode>
+      </React.StrictMode>
   );
+
+  setTimeout(window.location.reload, 7500)
 }
 
 to_home()

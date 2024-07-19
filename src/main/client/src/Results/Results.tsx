@@ -1,6 +1,5 @@
 import './Results.css';
 import { PlayerID } from '../types';
-import {to_game} from '../main';
 import $ from 'jquery';
 import {useEffect} from 'react';
 
@@ -11,10 +10,6 @@ interface ResultsProps {
 
 export default function ResultsComponent({winner}: ResultsProps) {
   winner = winner.substring(0, 16)
-  const timeout = setTimeout(() => {
-    clearTimeout(timeout);
-    to_game();
-  }, (winner.length + 10) * 150 + 1000);
 
   useEffect(() =>  {
     if (winner === "skip") {
