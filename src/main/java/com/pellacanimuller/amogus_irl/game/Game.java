@@ -484,9 +484,9 @@ public class Game {
         players.forEach((player) -> {
             JsonObjectBuilder obj = Json.createObjectBuilder();
             switch (player) {
-                case Healer ignored -> obj.add("player", player.id).add("role", "healer");
-                case Crewmate ignored -> obj.add("player", player.id).add("role", "crewmate");
-                case Impostor ignored -> obj.add("player", player.id).add("role", "impostor");
+                case Healer _ -> obj.add("player", player.id).add("role", "healer");
+                case Crewmate _ -> obj.add("player", player.id).add("role", "crewmate");
+                case Impostor _ -> obj.add("player", player.id).add("role", "impostor");
                 default -> throw new IllegalStateException("Unexpected value: " + player);
             }
             array.add(obj.build());
