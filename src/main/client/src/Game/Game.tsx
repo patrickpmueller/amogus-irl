@@ -75,7 +75,7 @@ export default function GameComponent() {
   return (
     <div id={deaths.indexOf(playerID) === -1 ? "game-wrapper" : "game-wrapper-death"} className="wrapper">
       <button id="role-specifics" className="button" onClick={roleSpecificFunction}>
-        Role Specific
+        Heal someone 
       </button>
       <ul className="list" id="tasklist">
         {tasklistElem}  

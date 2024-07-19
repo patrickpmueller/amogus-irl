@@ -84,6 +84,7 @@ export default class GameWebSocket {
                     if (index > -1) {
                         deaths.splice(index, 1);
                     }
+                    updatePlayerlist(playerlist);
             }
         }
     }
