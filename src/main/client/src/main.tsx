@@ -15,9 +15,12 @@ import {deaths, setPlayerID, setRole} from './gameEnv';
 
 const reactRoot = ReactDOM.createRoot($("#root").get(0)!);
 
-let gameFinishedInterval: number;
 let gameFinished = false;
 let winners: Role;
+let currentScreen: GameScreen;
+type GameScreen = "home" | "lobby" | "settings" | "role" | "results" | "game" | "meeting" 
+  | "gameEnd"
+
 export function finishGame(w: Role) {
   winners = w;
   gameFinished = true;
@@ -26,10 +29,15 @@ export function finishGame(w: Role) {
   });
   setPlayerID("");
   setRole("unset");
-  gameFinishedInterval = setInterval(() => to_gameEnd(winners), 1500);
+  setTimeout(() => {
+  if (currentScreen !== "results") {
+      to_gameEnd(w);
+  }
+  });
 }
 
 function to_lobby() {
+  currentScreen = "lobby";
   reactRoot.render(
     <React.StrictMode>
       <LobbyComponent />
@@ -38,6 +46,7 @@ function to_lobby() {
 }
 
 function to_settings() {
+  currentScreen = "settings";
   reactRoot.render(
     <React.StrictMode>
       <SettingsComponent />
@@ -46,6 +55,7 @@ function to_settings() {
 }
 
 function to_home() {
+  currentScreen = "home";
   reactRoot.render(
     <React.StrictMode>
       <HomeComponent />
@@ -54,6 +64,7 @@ function to_home() {
 }
 
 function to_role() {
+  currentScreen = "role";
   reactRoot.render(
     <React.StrictMode>
       <RoleComponent />
@@ -62,6 +73,7 @@ function to_role() {
 }
 
 function to_game() {
+  currentScreen = "game";
   reactRoot.render(
     <React.StrictMode>
       <GameComponent />
@@ -70,12 +82,14 @@ function to_game() {
 }
 
 function to_meeting() {
+  currentScreen = "meeting";
   reactRoot.render(
     <MeetingComponent />
   );
 }
 
 function to_results(winner: PlayerID) {
+  currentScreen = "results";
   reactRoot.render(
     <React.StrictMode>
       <ResultsComponent winner={winner} />
@@ -84,22 +98,22 @@ function to_results(winner: PlayerID) {
 
   setTimeout(() => {
     if (gameFinished) {
-      clearInterval(gameFinishedInterval);
       to_gameEnd(winners);
     } else {
       to_game();
     }
-  }, winner === "skip" ? 8000 : (winner.length + 10) * 150 + 1000);
+  }, winner === "skip" ? 10000 : (winner.length + 10) * 150 + 1000);
 }
 
 function to_gameEnd(winners: Role) {
+  currentScreen = "gameEnd";
   reactRoot.render(
     <React.StrictMode>
       <GameEndComponent winner={winners} />
       </React.StrictMode>
   );
 
-  setTimeout(window.location.reload, 7500)
+  setTimeout(() => window.location.reload(), 5000)
 }
 
 to_home()

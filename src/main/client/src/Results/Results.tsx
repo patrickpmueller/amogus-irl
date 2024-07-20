@@ -26,10 +26,10 @@ export default function ResultsComponent({winner}: ResultsProps) {
   return (
     <div className="wrapper" id="results-wrapper">
       {winner === "skip" ?
-        <>
+        <div id="skip-div">
           <span className="wrap" id="skipped-tag1"></span>
           <span className="wrap" id="skipped-tag2"></span>
-        </> : 
+        </div> : 
         <>
           <img
             id="ejected"

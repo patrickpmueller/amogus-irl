@@ -142,7 +142,7 @@ public class GameWSServerTest {
         gameMock.players = new ArrayList<>();
         gameMock.players.add(player);
         gameMock.players.add(healer);
-        String heal = "[{\"action\": \"heal\", \"playerID\": \"player\"}]";
+        String heal = "[{\"action\": \"heal\", \"target\": \"player\"}]";
         when(gameMock.getPlayer(anyString())).thenCallRealMethod();
 
         when(webSocketMock.getAttachment()).thenReturn(healer);

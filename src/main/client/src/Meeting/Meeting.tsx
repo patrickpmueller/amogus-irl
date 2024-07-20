@@ -52,7 +52,7 @@ export default function MeetingComponent() {
       </div>);
 
   return (
-    <div className="wrapper" id="meetingWrapper">
+    <div id={deaths.indexOf(playerID) === -1 ? "meeting-wrapper" : "meeting-wrapper-death"} className="wrapper">
       <div id="title">Who is the Impostor?</div>
         <div className="wrapper" id="playersBox">
           {voteOptions}

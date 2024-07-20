@@ -2,9 +2,15 @@
 	font-size: 5rem;
 }
 
-#meetingWrapper {
+#meeting-wrapper {
 	grid-template-rows: 5rem 1fr 3em;
 	row-gap: 1rem;
+}
+
+#meeting-wrapper-death {
+	grid-template-rows: 5rem 1fr 3em;
+	row-gap: 1rem;
+	background-color: var(--nord11);
 }
 
 #playersBox {

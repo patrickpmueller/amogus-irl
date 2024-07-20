@@ -177,7 +177,7 @@ public class GameWSServer extends WebSocketServer {
                                 }
                             }
                             case "heal" -> {
-                                String target = actionObj.getString("playerID");
+                                String target = actionObj.getString("target");
                                 if (player instanceof Healer) {
                                     game.healPlayer(game.getPlayer(target), (Healer) player);
                                 }

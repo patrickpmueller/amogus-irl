@@ -1,7 +1,7 @@
 import { Message, Settings, Role, PlayerRole, TaskID, PlayerID, MessageOut } from './types.ts';
 import { changeSettings, settings } from './settings.ts';
 import { playerID, updatePlayerlist, setRole, updateTasklist, deaths, playerlist } from './gameEnv.ts';
-import { finishGame, to_gameEnd, to_meeting, to_results, to_role} from './main.tsx';
+import { finishGame, to_meeting, to_results, to_role} from './main.tsx';
 
 export default class GameWebSocket {
     private reconnectInterval: number = 3000; // 3 seconds
@@ -118,7 +118,7 @@ export default class GameWebSocket {
     }
 
     public sendHeal(target: PlayerID) {
-        this.send(this.asString({ action: "heal", playerID: target}));
+        this.send(this.asString({ action: "heal", target: target}));
     }
 
     public sendTaskCompleted(taskID: TaskID) {
