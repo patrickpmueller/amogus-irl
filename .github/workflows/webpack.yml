@@ -1,4 +1,4 @@
-name: NodeJS with Webpack
+name: Client compile tests
 
 on:
   push:
@@ -24,5 +24,6 @@ jobs:
 
     - name: Build
       run: |
+        cd src/main/client
         npm install
         npm run build
