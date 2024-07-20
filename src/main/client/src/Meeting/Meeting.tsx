@@ -13,16 +13,14 @@ export default function MeetingComponent() {
   useEffect(() => {
     let lastRun = Date.now();
     if (meetingProgress > 0) {
-      setTimeout(() => {lastRun = decrementMeetingCount(lastRun)}, 60);
+      setTimeout(() => {
+        const now = Date.now();
+        setMeetingProgress(meetingProgress - (now - lastRun));
+        console.log(`Now - Last Run: ${now - lastRun}, Meeting Progress: ${meetingProgress}`);
+        lastRun = now;
+      }, 60);
     } 
   }, [meetingProgress]);
-
-  function decrementMeetingCount(lastRun: number): number {
-    const now = Date.now();
-    setMeetingProgress(meetingProgress - (now - lastRun));
-      console.log(`Now - Last Run: ${now - lastRun}, Meeting Progress: ${meetingProgress}`);
-    return now;
-  }
 
   function vote(ev: React.MouseEvent<HTMLDivElement>) {
     if (voted) {
