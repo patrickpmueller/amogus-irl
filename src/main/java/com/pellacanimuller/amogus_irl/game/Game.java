@@ -293,7 +293,7 @@ public class Game {
         log.info("Game started");
 
         checkWinConditionsScheduler = Executors.newScheduledThreadPool(1);
-        checkWinConditionsScheduler.scheduleAtFixedRate(this::checkWinConditions, 0, 2500, TimeUnit.MILLISECONDS);
+        checkWinConditionsScheduler.scheduleAtFixedRate(this::checkWinConditions, 0, 1000, TimeUnit.MILLISECONDS);
     }
 
     /**
