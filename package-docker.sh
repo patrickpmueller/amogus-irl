@@ -3,7 +3,7 @@ set -e
 
 # Set variables
 APP_NAME="amogus-irl"
-DIST_DIR="src/main/client/dist"
+CLIENT_DIR="src/main/client"
 DOCKER_DIR="dist/${APP_NAME}-docker"
 JAR_NAME="backend-server-jar-with-dependencies.jar"
 FINAL_JAR_PATH="target/${JAR_NAME}"
@@ -25,7 +25,8 @@ mkdir -p "$DOCKER_DIR/public"
 
 echo "Copying files..."
 cp "$FINAL_JAR_PATH" "$DOCKER_DIR/$JAR_NAME"
-cp -r "$DIST_DIR"/* "$DOCKER_DIR/public"
+cp -r "$CLIENT_DIR"/dist/* "$DOCKER_DIR/public"
+cp -r "$CLIENT_DIR"/public/* "$DOCKER_DIR/public"
 cp src/main/resources/settings.toml "$DOCKER_DIR/config/settings.toml"
 
 # Create Avahi configuration
