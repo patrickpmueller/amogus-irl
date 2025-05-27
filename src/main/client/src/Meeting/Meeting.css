@@ -1,5 +1,5 @@
 #title {
-	font-size: 5rem;
+	font-size: 4rem;
 }
 
 #meeting-wrapper {
@@ -38,14 +38,14 @@
 	color: var(--nord11);
 	border-color: var(--nord11);
 }
- 
+
 .me {
 	font-weight: bold;
 	border-width: 6px;
 }
 
 #meetingProgress {
-	width: calc(100vw - 2rem);	
+	width: calc(100vw - 2rem);
 	border: 4px var(--nord3) solid;
 	height: 3em;
 	border-radius: 8px;

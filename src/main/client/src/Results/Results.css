@@ -1,22 +1,22 @@
 @keyframes disappear {
-	from { 
-		transform: rotateX(0deg) 
-			rotateY(0deg) 
+	from {
+		transform: rotateX(0deg)
+			rotateY(0deg)
 			rotateZ(0deg)
-			scale(1, 1);	
+			scale(1, 1);
 	}
 	50% {
-		transform: rotateX(18deg) 
-			rotateY(-17deg) 
+		transform: rotateX(18deg)
+			rotateY(-17deg)
 			rotateZ(191deg)
 			scale(0.455, 0.455);
 
 	}
-	to { 
-		transform: rotateX(36deg) 
-			rotateY(10deg) 
+	to {
+		transform: rotateX(36deg)
+			rotateY(10deg)
 			rotateZ(382deg)
-			scale(0.005, 0.005); 
+			scale(0.005, 0.005);
 	}
 }
 
@@ -30,7 +30,7 @@
 }
 
 @keyframes distance {
-	from {	
+	from {
 		transform: scale(0.01, 0.01) rotateX(36deg) rotateY(10deg) rotateZ(382deg);
 	}
 	to {
@@ -51,6 +51,7 @@
 #results-wrapper {
 	grid-template-rows: calc(100vh - 9em) 6em;
 	row-gap: 1rem;
+	text-orientation: mixed;
 }
 
 #ejected {

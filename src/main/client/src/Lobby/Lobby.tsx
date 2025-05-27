@@ -6,7 +6,7 @@ import $ from 'jquery';
 import {useEffect, useState} from 'react';
 
 export default function LobbyComponent() {
-  const [playerlistElem, setPlayerlistElem] = 
+  const [playerlistElem, setPlayerlistElem] =
     useState([<div key="err">{"Error while loading playerlist"}</div>]);
 
   function updatePlayerlist() {
@@ -19,7 +19,7 @@ export default function LobbyComponent() {
         .map((player, index) => player == playerID ?
           <li key={index} id={player} className='player'><b>{player}</b></li> :
           <li key={index} id={player} className="player">{player}</li>));
-    }    
+    }
     setPlayerlistElem(local);
   }
   useEffect(updatePlayerlist, []);
@@ -40,7 +40,7 @@ export default function LobbyComponent() {
         Rejoin game
       </button>
       <ul id="lobby-playerlist" className="list">
-        {playerlistElem}  
+        {playerlistElem}
       </ul>
       <div className="nameBox" id="playerNameBox">
         <label htmlFor="name">Nickname: </label>

@@ -13,7 +13,7 @@ export default function RoleComponent() {
       console.error("No playerID set");
     } else {
       $("#role").attr("src", "/html-" + role + ".svg");
-      $("#role").attr("alt", "Error! couldn't load SVG!\nRole: " + role);
+      $("#role").attr("alt", "Error! couldn't load SVG! Role: " + role);
       document.title = "Role: " + role.charAt(0).toUpperCase() + role.slice(1);
       let time = false;
       const forward = setInterval(() => {

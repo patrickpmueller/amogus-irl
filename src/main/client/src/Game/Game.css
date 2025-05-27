@@ -1,13 +1,13 @@
 #game-wrapper {
   column-gap: 1rem;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 9rem 9rem;
+  grid-template-rows: 1fr 12rem 12rem;
   row-gap: 1rem;
 }
 #game-wrapper-death {
   column-gap: 1rem;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 9rem 9rem;
+  grid-template-rows: 1fr 12rem 12rem;
   row-gap: 1rem;
   background-color: var(--nord11);
 }

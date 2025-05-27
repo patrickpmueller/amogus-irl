@@ -29,14 +29,14 @@ export default function ResultsComponent({winner}: ResultsProps) {
         <div id="skip-div">
           <span className="wrap" id="skipped-tag1"></span>
           <span className="wrap" id="skipped-tag2"></span>
-        </div> : 
+        </div> :
         <>
           <img
             id="ejected"
             src="/html-ejected.svg"
             alt="Error! Couldn't load SVG!"
             width="calc(100vw - 2rem)"
-            height="calc(100vh - 3rem - 6em)"/> 
+            height="calc(100vh - 3rem - 6em)"/>
           <span className="wrap" id="ejected-tag"></span>
         </>
       }

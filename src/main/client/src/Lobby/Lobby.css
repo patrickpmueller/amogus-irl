@@ -1,8 +1,8 @@
 #lobby-wrapper {
-  grid-template-rows: 1fr 5fr 5fr;
+  grid-template-rows: 2fr 5fr 5fr;
   row-gap: 1rem;
   column-gap: 1rem;
-  grid-template-columns: 3fr 2fr;
+  grid-template-columns: 2fr 3fr;
 }
 
 #back {
@@ -28,6 +28,7 @@
   grid-column-end: 2;
   grid-row-start: 2;
   grid-row-end: 3;
+  padding: 4rem
 }
 
 #playerNameBox {
@@ -47,4 +48,8 @@
   display: grid;
   place-items: center;
   row-gap: 1.5em;
+}
+
+#name {
+  padding: 0.5rem 0rem;
 }
