@@ -1,0 +1,13 @@
+maxPlayers = 4
+
+[meeting]
+duration = 35
+
+[tasks]
+total = 12
+perPlayer = 6
+
+[roles]
+healers = 1
+impostors = 1
+crewmates = 2
