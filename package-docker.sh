@@ -5,7 +5,7 @@ set -e
 APP_NAME="amogus-irl"
 DIST_DIR="src/main/client/dist"
 DOCKER_DIR="dist/${APP_NAME}-docker"
-JAR_NAME="backend-server.jar"
+JAR_NAME="backend-server-jar-with-dependencies.jar"
 FINAL_JAR_PATH="target/${JAR_NAME}"
 
 echo "Building Java backend..."
