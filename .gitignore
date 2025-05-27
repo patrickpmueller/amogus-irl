@@ -51,8 +51,8 @@ node_modules/**
 **/public/**/*.js.map
 
 ## Other files ###
-*.svg
-*.toml
+#*.svg
+#*.toml
 
 # Logs
 logs
