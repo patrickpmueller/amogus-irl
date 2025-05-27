@@ -9,7 +9,10 @@
     <version>1.0</version>
     <packaging>jar</packaging>
 
+    <name>amogus-irl</name>
+
     <build>
+        <finalName>backend-server</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -29,6 +32,7 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
+                    <finalName>backend-server</finalName>
                     <archive>
                         <manifest>
                             <mainClass>com.pellacanimuller.amogus_irl.Main</mainClass>
