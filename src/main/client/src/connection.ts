@@ -149,4 +149,4 @@ export default class GameWebSocket {
     }
 }
 
-export const socket = new GameWebSocket("ws://localhost:8080");
+export const socket = new GameWebSocket("ws://" + location.host + ":8080");
