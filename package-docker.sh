@@ -85,7 +85,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - config:/app/config
+      - ./config:/app/config
 
   ${APP_NAME}-web:
     image: httpd:2.4-alpine
@@ -103,9 +103,6 @@ services:
       - ./avahi/avahi-daemon.conf:/etc/avahi/avahi-daemon.conf:ro
       - ./avahi/services:/etc/avahi/services:ro
     command: sh -c "apt-get update && apt-get install -y avahi-daemon && avahi-daemon -f"
-
-volumes:
-  config:
 EOF
 
 echo "Packaging into tar.gz..."
