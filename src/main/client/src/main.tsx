@@ -13,12 +13,16 @@ import ResultsComponent from './Results/Results';
 import {PlayerID, Role} from './types';
 import {deaths, setPlayerID, setRole} from './gameEnv';
 
+
+
 const reactRoot = ReactDOM.createRoot($("#root").get(0)!);
+const debug = false;
+
 
 let gameFinished = false;
 let winners: Role;
 let currentScreen: GameScreen;
-type GameScreen = "home" | "lobby" | "settings" | "role" | "results" | "game" | "meeting" 
+type GameScreen = "home" | "lobby" | "settings" | "role" | "results" | "game" | "meeting"
   | "gameEnd"
 
 export function finishGame(w: Role) {
@@ -116,6 +120,15 @@ function to_gameEnd(winners: Role) {
   setTimeout(() => window.location.reload(), 5000)
 }
 
-to_home()
+if (debug) {
+  reactRoot.render(
+    <React.StrictMode>
+      <ResultsComponent winner={"Player1234123"} />
+      </React.StrictMode>
+  );
+} else {
+  to_home()
+}
+
 
 export { to_lobby, to_settings, to_home, to_role, to_game, to_meeting, to_results, to_gameEnd};

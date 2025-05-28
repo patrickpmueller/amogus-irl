@@ -27,17 +27,19 @@ export default function ResultsComponent({winner}: ResultsProps) {
     <div className="wrapper" id="results-wrapper">
       {winner === "skip" ?
         <div id="skip-div">
-          <span className="wrap" id="skipped-tag1"></span>
           <span className="wrap" id="skipped-tag2"></span>
+          <span className="wrap" id="skipped-tag1"></span>
         </div> :
         <>
-          <img
-            id="ejected"
-            src="/html-ejected.svg"
-            alt="Error! Couldn't load SVG!"
-            width="calc(100vw - 2rem)"
-            height="calc(100vh - 3rem - 6em)"/>
-          <span className="wrap" id="ejected-tag"></span>
+          <div id="ejected-grid">
+            <img
+              id="ejected"
+              src="/html-ejected.svg"
+              alt="Error! Couldn't load SVG!"
+              width="calc(85vw - 10.5rem)"
+              height="calc(85vh - 2rem)"/>
+            <span className="wrap" id="ejected-tag"></span>
+          </div>
         </>
       }
     </div>
@@ -71,6 +73,7 @@ class TextType {
     const delta = this.totalTime / this.fullText.length + this.jitter * Math.random();
 
     if (this.currentText === this.fullText) {
+      $(this.el).css('border-bottom-width', '0px');
       return;
     }
 

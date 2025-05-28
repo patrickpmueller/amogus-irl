@@ -79,7 +79,7 @@ export default class GameWebSocket {
                 case "endGame":
                     finishGame(msg.data as Role);
                     break;
-                case "healed": 
+                case "healed":
                 {
                         const index: number = deaths.indexOf(msg.data as PlayerID, 0);
                         if (index > -1) {
@@ -149,4 +149,4 @@ export default class GameWebSocket {
     }
 }
 
-export const socket = new GameWebSocket("ws://" + location.host + ":8080");
+export const socket = new GameWebSocket("ws://" + location.hostname + ":8080");

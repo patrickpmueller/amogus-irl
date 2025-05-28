@@ -3,13 +3,19 @@
 		transform: rotateX(0deg)
 			rotateY(0deg)
 			rotateZ(0deg)
-			scale(1, 1);
+			scale(calc(85vmin - 10.5rem / 850px), calc(85vmin - 10.5rem / 850px));
+	}
+	95% {
+		transform: rotateX(2deg)
+			rotateY(2deg)
+			rotateZ(24deg)
+			scale(calc(50vmin - 10.5rem / 850px), calc(50vmin - 10.5rem / 850px));
 	}
 	50% {
 		transform: rotateX(18deg)
 			rotateY(-17deg)
 			rotateZ(191deg)
-			scale(0.455, 0.455);
+			scale(calc(40vmin - 10.5rem / 850px), calc(40vmin - 10.5rem / 850px));
 
 	}
 	to {
@@ -20,26 +26,9 @@
 	}
 }
 
-@keyframes show {
-	from {
-		transform: scale(1.2, 1.2) rotateZ(0deg);
-	}
-	to {
-		transform: scale(1, 1) rotateZ(120deg);
-	}
-}
-
-@keyframes distance {
-	from {
-		transform: scale(0.01, 0.01) rotateX(36deg) rotateY(10deg) rotateZ(382deg);
-	}
-	to {
-		transform: scale(0.001, 0.001) rotateX(36deg) rotateY(10deg) rotateZ(80deg);
-	}
-}
-
 #skip-div {
 	display: grid;
+	grid-template-rows: auto auto;
 }
 
 
@@ -49,37 +38,45 @@
 }
 
 #results-wrapper {
-	grid-template-rows: calc(100vh - 9em) 6em;
-	row-gap: 1rem;
-	text-orientation: mixed;
+	row-gap: 3rem;
+	writing-mode: vertical-lr;
+}
+
+#ejected-grid {
+	display: grid;
+	width: 100%;
+	height: 100%;
+	grid-template-rows: 1fr 8.5rem;
+	margin: 1rem;
 }
 
 #ejected {
-	animation-delay: 0s, 1.5s, 3.5s;
-	animation-name: show, disappear, end;
-	animation-duration: 1.5s, 2s, 2s;
-	animation-iteration-count: 1, 1, 1;
-	animation-timing-function: ease-in, linear, linear;
+	animation-delay: 0s;
+	animation-name: disappear;
+	animation-duration: 6s;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in-out;
 	animation-fill-mode: forwards;
 	animation-composition: add;
 	max-width: calc(100vw - 2rem);
 	max-height: calc(100vh - 9rem);
+	justify-self: start;
+	width: auto;
+	display: inline-block;
+	overflow: hidden;
 }
 
 .wrap {
 	font-size: 6rem;
-	margin: 0 auto;
-	position: relative;
 	max-width: 95vw;
-	display: flex;
+	padding: 1rem;
+	display: inline-block;
 	animation:
 		blink-caret .75s step-end infinite;
 	overflow: hidden;
-	border-right: .1em solid var(--nord7);
+	border-bottom: .1em solid var(--nord7);
 	letter-spacing: .1em;
 	white-space: nowrap;
-}
-
-#skipped-tag {
-	font-size: 12em;
+	justify-self: start;
+	width: auto;
 }

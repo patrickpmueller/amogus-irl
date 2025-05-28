@@ -5,7 +5,7 @@ export default function GameEndComponent(props: GameEndComponentProps) {
   const winner = props.winner;
 
   return (
-    <img 
+    <img
       id="gameEndScreen"
       src={"html-game-end-" + winner + ".svg"}
       alt={winner}
@@ -15,5 +15,5 @@ export default function GameEndComponent(props: GameEndComponentProps) {
 }
 
 export interface GameEndComponentProps {
-  winner: Role; 
+  winner: Role;
 }
