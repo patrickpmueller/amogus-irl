@@ -16,10 +16,9 @@ export default function MeetingComponent() {
       setTimeout(() => {
         const now = Date.now();
         setMeetingProgress(meetingProgress - (now - lastRun));
-        console.log(`Now - Last Run: ${now - lastRun}, Meeting Progress: ${meetingProgress}`);
         lastRun = now;
       }, 60);
-    } 
+    }
   }, [meetingProgress]);
 
   function vote(ev: React.MouseEvent<HTMLDivElement>) {
@@ -38,15 +37,15 @@ export default function MeetingComponent() {
     }
   }
 
-  const voteOptions: React.JSX.Element[] = playerlist.map((player, index) => 
-    <div 
-      key={index} 
+  const voteOptions: React.JSX.Element[] = playerlist.map((player, index) =>
+    <div
+      key={index}
       className={"button voteOption" +
-        (deaths.indexOf(player) === -1 ? "" : " dead") + 
-        (player === playerID ? " me" : "")} 
+        (deaths.indexOf(player) === -1 ? "" : " dead") +
+        (player === playerID ? " me" : "")}
       id={player}
       onClick={vote}>
-        {player} 
+        {player}
       </div>);
 
   return (
@@ -58,9 +57,9 @@ export default function MeetingComponent() {
           Skip
         </div>
         </div>
-        <progress 
-        id="meetingProgress" 
-        max={settings.meeting.duration * 1000} 
+        <progress
+        id="meetingProgress"
+        max={settings.meeting.duration * 1000}
         value={meetingProgress}>
         </progress>
       </div>
