@@ -96,8 +96,8 @@ zeroconf.register_service(info2)
 logging.info("Registered service amogus-8080 on port 8080")
 
 try:
-    logging.info("Broadcasting amogus.local on ports 80 and 8080")
     while True:
+        logging.info("Broadcasting amogus.local on ports 80 and 8080")
         time.sleep(60)
 except KeyboardInterrupt:
     logging.info("Interrupted. Unregistering services...")
