@@ -8,3 +8,15 @@ Right now there should be a task list, meetings and death reporting, and role di
 
 ## Contributing
 If someone is willing to contribute, please open an issue to discuss any changes *before* opening a PR.
+
+## Dependencies
+
+### Runtime
+
+- Java 25 JRE
+- A web server (eg. nginx or apache2)
+
+### Build
+
+- Java 25 JDK
+- NPM
