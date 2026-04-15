@@ -1,6 +1,6 @@
 # Among us In Real Life
-> This is a side project that is currently incomplete, and still in active development. There is
-> no public roadmap as I am still deciding some things related to this project.
+
+**ONLY USE IN LAN GAMES, DO NOT EXPOSE TO THE INTERNET, SERVER IS NOT HARDENED AND THERE IS NO AUTH WHATSOEVER**
 
 ## Goal
 This project aims to seamlessly integrate using a mobile device to facilitate some things when playing a game based on the popular video game `Among Us`, in real life.
