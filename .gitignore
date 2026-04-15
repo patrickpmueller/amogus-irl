@@ -73,3 +73,5 @@ dist-ssr
 .mvn
 
 .gradle
+docker/gameserver/*.jar
+docker/webserver/dist/

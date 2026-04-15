@@ -2,6 +2,15 @@ plugins {
     id 'java'
 }
 
+def getDockerUser() {
+    return findProperty('dockerUser')
+        ?: System.getenv('DOCKER_USER')
+        ?: 'local'
+}
+
+def getImageBase() {
+    return "${getDockerUser()}/amogus-irl"
+}
 group = 'com.pellacanimuller'
 version = '1.0'
 
@@ -61,9 +70,68 @@ tasks.register('npmBuild', Exec) {
     workingDir = file('src/main/client')
     dependsOn 'npmInstall'
     commandLine 'npm', 'run', 'build'
-	commandLine 'mv', 'dist/', '../../../build/frontend/'
 }
 
-tasks.register('buildFrontend') {
+tasks.register('copyFrontend', Copy) {
     dependsOn 'npmBuild'
+    from 'src/main/client/dist/'
+    into 'build/frontend/'
+}
+
+
+tasks.register('prepareGameServerDockerContext', Copy) {
+    dependsOn 'jar'
+
+    from('build/libs/backend-server.jar') {
+        rename { 'gameserver-full.jar' }
+    }
+    into 'docker/gameserver'
+
+    from('src/main/resources/settings.toml')
+    into 'docker/gameserver'
+}
+
+tasks.register('prepareWebServerDockerContext', Copy) {
+    dependsOn 'copyFrontend'
+
+    from('build/frontend/')
+    into 'docker/webserver/dist'
+}
+
+tasks.register('buildGameServerImage', Exec) {
+    dependsOn 'prepareGameServerDockerContext'
+
+    commandLine 'docker', 'build',
+        '-t', "${getImageBase()}:gameserver",
+        'docker/gameserver'
+}
+
+tasks.register('buildWebServerImage', Exec) {
+    dependsOn 'prepareWebServerDockerContext'
+
+    commandLine 'docker', 'build',
+        '-t', "${getImageBase()}:webserver",
+        'docker/webserver'
+}
+
+tasks.register('pushGameServerImage', Exec) {
+    dependsOn 'buildGameServerImage'
+
+    commandLine 'docker', 'push',
+        "${getImageBase()}:gameserver"
+}
+
+tasks.register('pushWebServerImage', Exec) {
+    dependsOn 'buildWebServerImage'
+
+    commandLine 'docker', 'push',
+        "${getImageBase()}:webserver"
+}
+
+tasks.register('buildDocker') {
+    dependsOn 'buildGameServerImage', 'buildWebServerImage'
+}
+
+tasks.register('pushDocker') {
+    dependsOn 'pushGameServerImage', 'pushWebServerImage'
 }

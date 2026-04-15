@@ -20,3 +20,12 @@ If someone is willing to contribute, please open an issue to discuss any changes
 
 - Java 25 JDK
 - NPM
+
+## Docker
+
+Log in to docker using `docker login`.
+Run `./gradlew pushDocker -PdockerUser=<your-docker-username>` to build the
+front and backend, and compile into docker images. Make sure that
+`<your-docker-username>/amogus-irl` is a repo on Docker Hub. If you wish to only
+build the docker containers locally, use `./gradlew buildDocker`, which builds
+`local/amogus-irl:gameserver` and `local/amogus-irl:webserver`.
