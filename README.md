@@ -29,3 +29,27 @@ front and backend, and compile into docker images. Make sure that
 `<your-docker-username>/amogus-irl` is a repo on Docker Hub. If you wish to only
 build the docker containers locally, use `./gradlew buildDocker`, which builds
 `local/amogus-irl:gameserver` and `local/amogus-irl:webserver`.
+
+## Example docker-compose:
+
+```
+version: "3.9"
+
+services:
+  gameserver:
+    image: patrickpmueller/amogus-irl:gameserver
+    stdin_open: true
+    restart: unless-stopped
+    ports:
+     - "8080:8080"
+
+  webserver:
+    image: patrickpmueller/amogus-irl:webserver
+    restart: unless-stopped
+    tmpfs:
+      - /tmp
+    ports:
+     - "80:80"
+    depends_on:
+     - gameserver
+```
